@@ -1,0 +1,71 @@
+{
+
+"educationdetails": {
+
+  "cluster" : "traveler_db",
+  "ui" : false,
+  "api" : true,
+  "fields" : {
+    "id": {
+
+     "name" : "id",
+     "required" : "true",
+     "type" : "String"
+     },
+    "applicantid": {
+
+     "name" : "applicantid",
+     "required" : "true",
+     "foreign" : {
+      "resource" :"Applicant" 
+      },
+     "type" : "String"
+     },
+    "level": {
+
+     "name" : "level",
+     "required" : "true",
+     "type" : "String"
+     },
+    "board": {
+
+     "name" : "board",
+     "required" : "true",
+     "type" : "String"
+     },
+    "specialization": {
+
+     "name" : "specialization",
+     "required" : "true",
+     "type" : "String"
+     },
+    "schoolname": {
+
+     "name" : "schoolname",
+     "required" : "true",
+     "type" : "String"
+     },
+    "grading": {
+
+     "name" : "grading",
+     "required" : "true",
+     "type" : "String"
+     },
+    "passingyear": {
+
+     "name" : "passingyear",
+     "required" : "true",
+     "type" : "String"
+     },
+    "marksobtained": {
+
+     "name" : "marksobtained",
+     "required" : "true",
+     "type" : "String"
+     }
+   
+  }
+ }
+
+}
+

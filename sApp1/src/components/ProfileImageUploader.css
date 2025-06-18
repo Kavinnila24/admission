@@ -1,0 +1,32 @@
+
+#id-profile {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+#id-profilepic {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%; /* or 20px */
+  display: flex;
+  flex-direction: column;
+  border: 2px solid black;
+  margin: auto;
+}
+
+.profile-placeholder {
+  width: 40px;
+  height: 40px;
+  border: 2px dashed gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* or 20px */
+  margin: auto;
+}
+
+.dropdown-menu li button {
+  width: 100%;
+  text-align: left;
+}

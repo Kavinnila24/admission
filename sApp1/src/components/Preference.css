@@ -1,0 +1,97 @@
+/* Container & Header */
+.container.mt-4 {
+  /* Add padding, background, or border if needed */
+}
+
+.container.mt-4 h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+/* Field Containers */
+.row > .col-md-6 {
+  /* General form field column styling */
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* Label Styling */
+label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* Required field asterisk */
+label span {
+  color: red;
+  margin-right: 4px;
+}
+
+/* Standard Input */
+input.form-control {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Enum Dropdown */
+select.form-select {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Foreign Key Dropdown Button */
+.dropdown > .btn.btn-secondary.dropdown-toggle {
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Dropdown Search Input */
+.dropdown-menu .form-control.mb-2 {
+  margin: 0.5rem;
+  width: calc(100% - 1rem);
+}
+
+/* Dropdown Options */
+.dropdown-menu .dropdown-item {
+  cursor: pointer;
+}
+
+/* No Options Available */
+.dropdown-menu .dropdown-item.text-muted {
+  font-style: italic;
+  color: #888;
+}
+
+/* Create Button */
+button.btn-success.ms-3 {
+  height: 38px;
+  padding: 0 15px;
+  margin-left: 70px;
+}
+
+/* Toast Styles */
+.toast-container {
+  z-index: 1050;
+}
+
+.toast {
+  min-width: 250px;
+  background-color: #fff;
+  border: 1px solid #28a745;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.toast-header {
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+}
+
+.toast-body.text-success {
+  font-weight: 500;
+}

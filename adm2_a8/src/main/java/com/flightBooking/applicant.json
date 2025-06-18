@@ -1,0 +1,70 @@
+{
+
+"applicant": {
+
+  "cluster" : "traveler_db",
+  "ui" : false,
+  "api" : true,
+  "fields" : {
+    "id": {
+
+     "name" : "id",
+     "required" : "true",
+     "type" : "String"
+     },
+    "fullname12": {
+
+     "name" : "fullname12",
+     "required" : "true",
+     "type" : "String"
+     },
+    "fullnamead": {
+
+     "name" : "fullnamead",
+     "required" : "true",
+     "type" : "String"
+     },
+    "mobile": {
+
+     "name" : "mobile",
+     "required" : "true",
+     "type" : "String"
+     },
+    "email": {
+
+     "name" : "email",
+     "required" : "true",
+     "type" : "String"
+     },
+    "abc": {
+
+     "name" : "abc",
+     "required" : "true",
+     "type" : "String"
+     },
+    "gender": {
+
+     "name" : "gender",
+     "required" : "true",
+     "is_enum" : "true",
+      "possible_value" :"Gender", 
+     "type" : "String"
+     },
+    "dob": {
+
+     "name" : "dob",
+     "required" : "true",
+     "type" : "Date"
+     },
+    "photo": {
+
+     "name" : "photo",
+     "required" : "true",
+     "type" : "String"
+     }
+   
+  }
+ }
+
+}
+

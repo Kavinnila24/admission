@@ -1,0 +1,65 @@
+{
+
+"currentaddress": {
+
+  "cluster" : "traveler_db",
+  "ui" : false,
+  "api" : true,
+  "fields" : {
+    "id": {
+
+     "name" : "id",
+     "required" : "true",
+     "type" : "String"
+     },
+    "applicant_id": {
+
+     "name" : "applicant_id",
+     "required" : "true",
+     "foreign" : {
+      "resource" :"Applicant" 
+      },
+     "type" : "String"
+     },
+    "line1": {
+
+     "name" : "line1",
+     "required" : "true",
+     "type" : "String"
+     },
+    "line2": {
+
+     "name" : "line2",
+     "required" : "true",
+     "type" : "String"
+     },
+    "city": {
+
+     "name" : "city",
+     "required" : "true",
+     "type" : "String"
+     },
+    "state": {
+
+     "name" : "state",
+     "required" : "true",
+     "type" : "String"
+     },
+    "country": {
+
+     "name" : "country",
+     "required" : "true",
+     "type" : "String"
+     },
+    "pincode": {
+
+     "name" : "pincode",
+     "required" : "true",
+     "type" : "String"
+     }
+   
+  }
+ }
+
+}
+

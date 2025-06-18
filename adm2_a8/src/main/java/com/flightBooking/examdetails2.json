@@ -1,0 +1,59 @@
+{
+
+"examdetails2": {
+
+  "cluster" : "traveler_db",
+  "ui" : false,
+  "api" : true,
+  "fields" : {
+    "id": {
+
+     "name" : "id",
+     "required" : "true",
+     "type" : "String"
+     },
+    "applicantid": {
+
+     "name" : "applicantid",
+     "required" : "true",
+     "foreign" : {
+      "resource" :"Applicant" 
+      },
+     "type" : "String"
+     },
+    "examtype": {
+
+     "name" : "examtype",
+     "required" : "true",
+     "type" : "String"
+     },
+    "rollno": {
+
+     "name" : "rollno",
+     "required" : "true",
+     "type" : "String"
+     },
+    "score": {
+
+     "name" : "score",
+     "required" : "true",
+     "type" : "String"
+     },
+    "rank": {
+
+     "name" : "rank",
+     "required" : "true",
+     "type" : "String"
+     },
+    "scorecardurl": {
+
+     "name" : "scorecardurl",
+     "required" : "true",
+     "type" : "String"
+     }
+   
+  }
+ }
+
+}
+

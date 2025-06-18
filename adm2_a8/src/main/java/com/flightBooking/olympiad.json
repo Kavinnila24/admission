@@ -1,0 +1,47 @@
+{
+
+"olympiad": {
+
+  "cluster" : "traveler_db",
+  "ui" : false,
+  "api" : true,
+  "fields" : {
+    "id": {
+
+     "name" : "id",
+     "required" : "true",
+     "type" : "String"
+     },
+    "applicant_id": {
+
+     "name" : "applicant_id",
+     "required" : "true",
+     "foreign" : {
+      "resource" :"Applicant" 
+      },
+     "type" : "String"
+     },
+    "name": {
+
+     "name" : "name",
+     "required" : "true",
+     "type" : "String"
+     },
+    "no": {
+
+     "name" : "no",
+     "required" : "true",
+     "type" : "String"
+     },
+    "proof": {
+
+     "name" : "proof",
+     "required" : "true",
+     "type" : "String"
+     }
+   
+  }
+ }
+
+}
+
