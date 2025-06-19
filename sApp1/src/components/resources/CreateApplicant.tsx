@@ -24,7 +24,7 @@ const CreateApplicant = () => {
   fullnamead: "Full Name (as Per Aadhaar)",
   mobile: "Mobile",
   email: "Email",
-  abc: "ABC",
+  abc: "ABC id: (Link: ABC | Academic Bank of Credits) ",
   gender: "Gender",
   dob: "Date of Birth (dd-mm-yyyy)",
   photo: "Photo",
