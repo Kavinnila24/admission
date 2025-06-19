@@ -44,13 +44,13 @@ const Payment = () => {
         }}
       >
         <div style={{ width: '100%' }}>
-          <h5 className="mb-3" style={{ fontWeight: '600' }}>
+          <h5 className="mb-3" style={{ fontWeight: '400' }}>
             Declaration and Final Submission
           </h5>
 
           <div
             style={{
-              border: '1px solid #ccc',
+              border: '1px solid #2196F3',
               borderRadius: '6px',
               padding: '20px',
             }}

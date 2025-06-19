@@ -27,6 +27,8 @@ const getPageTitle = (pathname: string): string => {
 export default function Page1() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [activePage, setActivePage] = useState<string>(location.pathname);
+  
   const pageTitle = getPageTitle(location.pathname);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -118,8 +120,8 @@ export default function Page1() {
               boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)'
             }}
           >
-            <div id="id-P" className="border border-0 h-50 mt-2 p-3">
-              <div id="id-R" className="border border-0 h-75 mt-2 p-3">
+            <div id="id-P" className="border border-0 h-50 mt-4">
+              <div id="id-R" className="border border-0 h-75">
                 <button 
                   className="btn btn-success w-100" 
                   id="id-T" 
