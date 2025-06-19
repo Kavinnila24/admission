@@ -173,7 +173,7 @@ const CreateCurrentaddress = () => {
             {field.foreign ? (
               <>
                 <label>
-                  {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name]}
+                  {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
                 </label>
                 <div className="dropdown">
                   <button
@@ -214,7 +214,7 @@ const CreateCurrentaddress = () => {
             ) : field.isEnum === true ? (
               <>
                 <label>
-                  {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name]}
+                  {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
                 </label>
                 <select
                   name={field.name}
@@ -234,7 +234,7 @@ const CreateCurrentaddress = () => {
             ) : (
               <>
                 <label>
-                  {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name]}
+                  {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
                 </label>
                 <input
                   type={field.type}

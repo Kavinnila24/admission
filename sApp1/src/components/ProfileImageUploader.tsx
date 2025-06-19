@@ -17,7 +17,7 @@ const ProfileImageUploader: React.FC = () => {
   };
 
   const handleRemove = () => {
-    setProfilePicUrl(null);
+    setProfilePicUrl('/profile_none.jpg');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }

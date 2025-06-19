@@ -5,8 +5,8 @@
 }
 
 #id-profilepic {
-  width: 40px;
-  height: 40px;
+  width: 70px;
+  height: 70px;
   object-fit: cover;
   border-radius: 50%; /* or 20px */
   display: flex;
