@@ -256,10 +256,10 @@ const CreatePermaddress = () => {
       return null;
     })}
   </div>
-
-  <button className="btn btn-success mt-4" onClick={handleCreate}>
-    Create
-  </button>
+<div className='d-flex justify-content-end'>
+  <button id="save_button" className="btn btn-success mt-2" onClick={handleCreate}>
+    Save
+  </button></div>
 </div>
 
 

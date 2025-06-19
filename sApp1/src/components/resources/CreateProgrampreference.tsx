@@ -227,9 +227,10 @@ const CreateProgrampreference = () => {
               style={{marginBottom: '250px'}}>
                 {inputField}
                 {isLastField && (
-                  <div><button className="btn btn-success" onClick={handleCreate}>Save</button></div>
+                  <div className='d-flex justify-content-end'><button id="save_button" className="btn btn-success" onClick={handleCreate}>Save</button></div>
                 )}
               </div>
+              
             );
           }
           return null;

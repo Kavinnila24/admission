@@ -83,6 +83,7 @@ const Payment = () => {
 
             <div className="text-center">
               <button
+              id='pay_button'
                 className="btn btn-primary"
                 style={{ minWidth: '150px' }}
                 onClick={handleSubmit}
