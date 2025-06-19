@@ -24,6 +24,7 @@ const CreateCurrentaddress = () => {
     state: "State",
     country: "Country",
     pincode: "Pincode",
+    city: "City",
   };
   // Fetch metadata
   useEffect(() => {

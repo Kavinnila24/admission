@@ -25,6 +25,7 @@ const CreatePermaddress = () => {
     state: "State",
     country: "Country",
     pincode: "Pincode",
+    city: "City",
   };
   // Fetch metadata
   useEffect(() => {
