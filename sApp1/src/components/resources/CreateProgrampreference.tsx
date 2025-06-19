@@ -227,7 +227,7 @@ const CreateProgrampreference = () => {
               style={{marginBottom: '250px'}}>
                 {inputField}
                 {isLastField && (
-                  <div className='ms-auto'><button className="btn btn-success mt-5 ml-5" onClick={handleCreate}>Save</button></div>
+                  <div><button className="btn btn-success" onClick={handleCreate}>Save</button></div>
                 )}
               </div>
             );
