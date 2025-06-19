@@ -20,6 +20,20 @@ const CreateProgrampreference = () => {
   const apiUrl = apiConfig.getResourceUrl("programpreference");
   const metadataUrl = apiConfig.getResourceMetaDataUrl("Programpreference");
 
+  const customFieldLabels: Record<string, string> = {
+    pref1: "Program Preference 1",
+    pref2: "Program Preference 2",
+    pref3: "Program Preference 3",
+    pref4: "Program Preference 4",
+    pref5: "Program Preference 5",
+    btech_cse: "B.Tech CSE",
+    btech_ece: "B.Tech ECE",
+    btech_aids: "B.Tech Artificial Intelligence & Data Science",
+    'Integrated Master of Technology CSE': "Integrated Master of Technology CSE",
+    'Integrated Master of Technology ECE': "Integrated Master of Technology ECE",
+    
+  };
+
   useEffect(() => {
     const fetchResMetaData = async () => {
       const fetchedResources = new Set();
@@ -134,7 +148,7 @@ const CreateProgrampreference = () => {
       );
       return (
         <div>
-          <label>{field.required && <span style={{ color: 'red' }}>*</span>} {field.name}</label>
+          <label>{field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}</label>
           <div className="dropdown">
             <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
               {dataToSave[field.name] ? options.find(item => item[field.foreign_field] === dataToSave[field.name])?.[field.foreign_field] || 'Select' : `Select ${field.name}`}
@@ -167,16 +181,17 @@ const CreateProgrampreference = () => {
     } else if (field.isEnum) {
       return (
         <div>
-          <label>{field.required && <span style={{ color: 'red' }}>*</span>} {field.name}</label>
+          <label>{field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}</label>
           <select
             className="form-select"
             name={field.name}
             value={dataToSave[field.name] || ''}
             onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
           >
-            <option value="">Select {field.name}</option>
+            <option value="">Select {customFieldLabels[field.name]}</option>
             {enums[field.possible_value]?.map((val, i) => (
-              <option key={i} value={val}>{val}</option>
+              <option key={i} value={val}>{customFieldLabels[val]}</option>
+              
             ))}
           </select>
         </div>
@@ -184,7 +199,7 @@ const CreateProgrampreference = () => {
     } else {
       return (
         <div>
-          <label>{field.required && <span style={{ color: 'red' }}>*</span>} {field.name}</label>
+          <label>{field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}</label>
           <input
             type={field.type}
             className="form-control"
@@ -199,7 +214,8 @@ const CreateProgrampreference = () => {
 
   return (
     <div className="container mt-4">
-      <h2>Create Program Preference</h2>
+      <h4 className='mt-5 fs-4'> Programme Preferences </h4>
+       <hr />
       <div className="row">
         {fields.map((field, index) => {
           if (field.name !== 'id' && !regex.test(field.name)) {
@@ -207,10 +223,11 @@ const CreateProgrampreference = () => {
             const isLastField = field.name === 'pref5';
 
             return (
-              <div key={index} className="col-md-6 mb-3 d-flex align-items-end">
+              <div key={index} className="col-md-6 d-flex justify-content-between align-items-end"
+              style={{marginBottom: '250px'}}>
                 {inputField}
                 {isLastField && (
-                  <button className="btn btn-success "style={{ marginLeft: '300px' }} onClick={handleCreate}>Save</button>
+                  <div className='ms-auto'><button className="btn btn-success mt-5 ml-5" onClick={handleCreate}>Save</button></div>
                 )}
               </div>
             );

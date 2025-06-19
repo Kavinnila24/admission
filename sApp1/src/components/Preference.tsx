@@ -13,7 +13,7 @@ const programOptions = [
 export default function Preference() {
   
   return(
-    <div>
+    <div className='p-4'>
       <CreateProgrampreference/>
     </div>
   )
