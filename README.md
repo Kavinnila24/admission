@@ -1,1 +1,1 @@
-# using google form will be better option
+# using google form would be better option
