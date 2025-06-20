@@ -94,10 +94,10 @@ export default function Page1() {
             </button>
             
             <div id="id-H" className="border border-0 h-50">
-              <div className="border-0 w-50" id="id-J" style={{ marginLeft: '0px' }}>
+              <div className="border-0 w-50" id="id-J" style={{ marginLeft: '50px' }}>
                 IMTECH/BTECH Admission Portal
               </div>
-              <h4 className="text-xl font-semibold text-white mt-5 mb-2 tracking-wide">{pageTitle}</h4>
+              <h4 className="text-xl font-semibold text-white mt-5 mb-2 tracking-wide" style={{ marginLeft: '50px' }}>{pageTitle}</h4>
             </div>
             <div id="id-profile" style={{marginLeft: 'auto', marginRight: '20px'}}>
               <ProfileImageUploader/>                  
