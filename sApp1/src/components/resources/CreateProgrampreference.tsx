@@ -20,6 +20,20 @@ const CreateProgrampreference = () => {
   const apiUrl = apiConfig.getResourceUrl("programpreference");
   const metadataUrl = apiConfig.getResourceMetaDataUrl("Programpreference");
 
+
+  const customFieldLabels: Record<string, string> = {
+    pref1: "Preference 1",
+    pref2: "Preference 2",
+    pref3: "Preference 3",
+    pref4: "Preference 4",
+    pref5: "Preference 5",
+    btech_cse:"B.Tech CSE",
+    btech_ece:"B.Tech ECE",
+    btech_aids:"B.Tech Artificial Intelligence & Data Science",
+    'Integrated Master of Technology CSE':"Integrated Master of Technology CSE",
+    'Integrated Master of Technology ECE':"Integrated Master of Technology ECE"
+  };
+
   useEffect(() => {
     const fetchResMetaData = async () => {
       const fetchedResources = new Set();
@@ -140,7 +154,7 @@ const CreateProgrampreference = () => {
       return (
         <div>
           <label>
-            {field.required && <span style={{ color: 'red' }}>*</span>} {field.name}
+            {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
           </label>
           <div className="dropdown">
             <button className="btn btn-secondary dropdown-toggle program-preference-input" type="button" data-bs-toggle="dropdown">
@@ -152,7 +166,7 @@ const CreateProgrampreference = () => {
               <input
                 type="text"
                 className="form-control mb-3 program-preference-input"
-                placeholder={`Search ${field.name}`}
+                placeholder={`Search ${customFieldLabels[field.name] || field.name}`}
                 value={searchQueries[field.name] || ''}
                 onChange={(e) => handleSearchChange(field.name, e.target.value)}
               />
@@ -177,7 +191,7 @@ const CreateProgrampreference = () => {
       return (
         <div>
           <label>
-            {field.required && <span style={{ color: 'red' }}>*</span>} {field.name}
+            {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
           </label>
           <select
             className="form-select program-preference-input"
@@ -185,9 +199,9 @@ const CreateProgrampreference = () => {
             value={dataToSave[field.name] || ''}
             onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
           >
-            <option value="">Select {field.name}</option>
+            <option value="">Select {customFieldLabels[field.name] || field.name}</option>
             {enums[field.possible_value]?.map((val: any, i: number) => (
-              <option key={i} value={val}>{val}</option>
+              <option key={i} value={val}>{customFieldLabels[val] || val}</option>
             ))}
           </select>
         </div>
@@ -196,13 +210,13 @@ const CreateProgrampreference = () => {
       return (
         <div>
           <label>
-            {field.required && <span style={{ color: 'red' }}>*</span>} {field.name}
+            {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
           </label>
           <input
             type={field.type || 'text'}
             className="form-control program-preference-input"
             name={field.name}
-            placeholder={`Enter ${field.name}`}
+            placeholder={`Enter ${customFieldLabels[field.name] || field.name}`}
             value={dataToSave[field.name] || ''}
             onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
           />
@@ -230,10 +244,11 @@ const CreateProgrampreference = () => {
 
   return (
     <div className="container mt-4">
-      <h2>Create Program Preference</h2>
+      <h2 className='mt-5 fs-4'>Program Preference</h2>
+      <hr/>
       {renderFields()}
       <div className="d-flex justify-content-end mb-4">
-        <button className="btn btn-success" onClick={handleCreate}>Save</button>
+        <button id='save_button' className="btn btn-success" onClick={handleCreate}>Save</button>
       </div>
 
       {showToast && (
