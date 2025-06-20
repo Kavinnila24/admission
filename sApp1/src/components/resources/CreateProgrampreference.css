@@ -1,0 +1,30 @@
+/* Common styling for all form fields in Program Preference */
+.program-preference-input {
+  font-size: 15px;
+  color: #333;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+/* Placeholder styling for input fields */
+.program-preference-input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* Placeholder-like style for the first option in <select> */
+.program-preference-input option[value=""] {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* Optional: hover and focus states */
+.program-preference-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
+}
+
+/* Optional: Dropdown item buttons inside foreign key dropdowns */
+.dropdown-item {
+  font-size: 14px;
+}
