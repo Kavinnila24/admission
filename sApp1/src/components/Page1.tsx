@@ -12,7 +12,7 @@ const getPageTitle = (pathname: string): string => {
     case "/guardian":
       return "Parent & Guardians Details";
     case "/preference":
-      return "Programme Preferences";
+      return "Program Preferences";
     case "/exam":
       return "Competitive Exam Details";
     case "/education":

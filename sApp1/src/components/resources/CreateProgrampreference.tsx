@@ -244,7 +244,7 @@ const CreateProgrampreference = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className='mt-5 fs-4'>Program Preference</h2>
+      <h4 className='mt-5 fs-4'>Program Preferences</h4>
       <hr/>
       {renderFields()}
       <div className="d-flex justify-content-end mb-4">
