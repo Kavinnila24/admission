@@ -1,7 +1,7 @@
 // Define the host and port separately
 const API_PROTOCOL = "http";
 const API_HOSTNAME = "localhost";
-const API_PORT = "8089";
+const API_PORT = "8087";
 const API_VERSION = "v1";
 
 // Construct the full base URL dynamically
