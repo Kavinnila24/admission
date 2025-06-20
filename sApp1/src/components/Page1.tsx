@@ -88,9 +88,9 @@ export default function Page1() {
   }}
   title={isSidebarCollapsed ? "Show Menu" : "Hide Menu"}
 >
-              <span style={{ display: 'block', width: '31px', height: '5px', backgroundColor: '#2196f3', margin: '3px 0' }}></span>
-              <span style={{ display: 'block', width: '31px', height: '5px', backgroundColor: '#2196f3', margin: '3px 0' }}></span>
-              <span style={{ display: 'block', width: '31px', height: '5px', backgroundColor: '#2196f3', margin: '3px 0' }}></span>
+              <span style={{ display: 'block', width: '31px', height: '5px', backgroundColor: '#2196f3', marginBottom: '3px',marginLeft:'1px' }}></span>
+              <span style={{ display: 'block', width: '31px', height: '5px', backgroundColor: '#2196f3', marginBottom: '3px',marginLeft:'1px' }}></span>
+              <span style={{ display: 'block', width: '31px', height: '5px', backgroundColor: '#2196f3', marginBottom: '3px',marginLeft:'1px' }}></span>
             </button>
             
             <div id="id-H" className="border border-0 h-50">
