@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiConfig from '../../config/apiConfig';
+
 export type resourceMetaData = {
   resource: string;
   fieldValues: any[];
@@ -13,23 +14,29 @@ const CreateApplicant = () => {
   const [foreignkeyData, setForeignkeyData] = useState<Record<string, any[]>>({});
   const [searchQueries, setSearchQueries] = useState<Record<string, string>>({});
   const [enums, setEnums] = useState<Record<string, any[]>>({});
-  
+
   const regex = /^(g_|archived|extra_data)/;
   const apiUrl = apiConfig.getResourceUrl("applicant");
   const metadataUrl = apiConfig.getResourceMetaDataUrl("Applicant");
-  
 
   const customFieldLabels: Record<string, string> = {
-  fullname12: "Full Name (as Per 12th Standard)",
-  fullnamead: "Full Name (as Per Aadhaar)",
-  mobile: "Mobile",
-  email: "Email",
-  abc: "ABC id: (Link: ABC | Academic Bank of Credits) ",
-  gender: "Gender",
-  dob: "Date of Birth (dd-mm-yyyy)",
-  photo: "Photo",
-};
+    fullname12: "Full Name (as Per 12th Standard)",
+    fullnamead: "Full Name (as Per Aadhaar)",
+    mobile: "Mobile",
+    email: "Email",
+    abc: "ABC",
+    gender: "Gender",
+    dob: "Date of Birth (dd-mm-yyyy)",
+    photo: "Photo",
+  };
 
+  // Automatically set applicantid to "nil" on component mount
+  useEffect(() => {
+    setDataToSave((prev:any) => ({
+      ...prev,
+      applicantid: 'nil',
+    }));
+  }, []);
 
   useEffect(() => {
     const fetchResMetaData = async () => {
@@ -79,20 +86,14 @@ const CreateApplicant = () => {
 
   const fetchEnumData = async (enumName: string) => {
     try {
-      const response = await fetch(
-        `${apiConfig.API_BASE_URL}/${enumName}`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const response = await fetch(`${apiConfig.API_BASE_URL}/${enumName}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       if (response.ok) {
         const data = await response.json();
-        setEnums((prev) => ({
-          ...prev,
-          [enumName]: data
-        }));
+        setEnums((prev) => ({ ...prev, [enumName]: data }));
       } else {
         console.error(`Error fetching enum data for ${enumName}:`, response.status);
       }
@@ -131,18 +132,22 @@ const CreateApplicant = () => {
   };
 
   const handleCreate = async () => {
-    const params = new URLSearchParams();
-    const jsonString = JSON.stringify(dataToSave);
-    const base64Encoded = btoa(jsonString);
-    params.append('resource', base64Encoded);
+    const formData = new FormData();
     const ssid: any = sessionStorage.getItem('key');
-    params.append('session_id', ssid);
+    formData.append('session_id', ssid);
 
-    const response = await fetch(`${apiUrl}?${params.toString()}`, {
+    const copy = { ...dataToSave };
+    for (const key in copy) {
+      if (key === 'photo' && copy[key] instanceof File) {
+        formData.append('photo', copy[key]);
+      } else {
+        formData.append(key, copy[key]);
+      }
+    }
+
+    const response = await fetch(`${apiUrl}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      body: formData,
     });
 
     if (response.ok) {
@@ -162,100 +167,129 @@ const CreateApplicant = () => {
       <hr />
 
       <div className="container mt-4">
-  <div className="row">
-    {fields.map((field, index) => {
-      if (field.name !== 'id' && !regex.test(field.name)) {
-        return (
-          <div key={index} className="col-md-6 mb-2">
-            {field.foreign ? (
-              <>
-                <label>
-                  {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
-                </label>
-                <div className="dropdown">
-                  <button
-                    className="btn btn-secondary dropdown-toggle w-100"
-                    type="button"
-                    id={`dropdownMenu-${field.name}`}
-                    data-bs-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    {dataToSave[field.name]
-                      ? (foreignkeyData[field.foreign]?.find((item) => item[field.foreign_field] === dataToSave[field.name])?.[field.foreign_field])
-                      : `Select ${field.name}`}
-                  </button>
-                  <div className="dropdown-menu w-100" aria-labelledby={`dropdownMenu-${field.name}`}>
-                    <input
-                      type="text"
-                      className="form-control mb-2"
-                      placeholder={`Search ${field.name}`}
-                      value={searchQueries[field.name] || ''}
-                      onChange={(e) => handleSearchChange(field.name, e.target.value)}
-                    />
-                    {(foreignkeyData[field.foreign] || []).filter(option =>
-                      option[field.foreign_field]?.toLowerCase()?.includes((searchQueries[field.name] || '').toLowerCase())
-                    ).map((option, i) => (
-                      <button
-                        key={i}
-                        className="dropdown-item"
-                        type="button"
-                        onClick={() => setDataToSave({ ...dataToSave, [field.name]: option[field.foreign_field] })}
+        <div className="row">
+          {fields.map((field, index) => {
+            // Exclude "id" and "applicantid" fields as well as any fields matching the regex
+            if (field.name !== 'id' && field.name !== 'applicantid' && !regex.test(field.name)) {
+              return (
+                <div key={index} className="col-md-6 mb-2">
+                  {field.name === 'photo' ? (
+                    <>
+                      <label>
+                        {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
+                      </label>
+                      <div className="d-flex">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Upload your photo"
+                          value={dataToSave[field.name]?.name || ''}
+                          readOnly
+                        />
+                        <label className="btn btn-primary ms-2 mb-0">
+                          Upload
+                          <input
+                            type="file"
+                            accept="image/*"
+                            hidden
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setDataToSave({ ...dataToSave, [field.name]: file });
+                              }
+                            }}
+                          />
+                        </label>
+                      </div>
+                    </>
+                  ) : field.foreign ? (
+                    <>
+                      <label>
+                        {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
+                      </label>
+                      <div className="dropdown">
+                        <button
+                          className="btn btn-secondary dropdown-toggle w-100"
+                          type="button"
+                          id={`dropdownMenu-${field.name}`}
+                          data-bs-toggle="dropdown"
+                          aria-haspopup="true"
+                          aria-expanded="false"
+                        >
+                          {dataToSave[field.name]
+                            ? (foreignkeyData[field.foreign]?.find((item) => item[field.foreign_field] === dataToSave[field.name])?.[field.foreign_field])
+                            : `Select ${field.name}`}
+                        </button>
+                        <div className="dropdown-menu w-100" aria-labelledby={`dropdownMenu-${field.name}`}>
+                          <input
+                            type="text"
+                            className="form-control mb-2"
+                            placeholder={`Search ${field.name}`}
+                            value={searchQueries[field.name] || ''}
+                            onChange={(e) => handleSearchChange(field.name, e.target.value)}
+                          />
+                          {(foreignkeyData[field.foreign] || []).filter(option =>
+                            option[field.foreign_field]?.toLowerCase()?.includes((searchQueries[field.name] || '').toLowerCase())
+                          ).map((option, i) => (
+                            <button
+                              key={i}
+                              className="dropdown-item"
+                              type="button"
+                              onClick={() => setDataToSave({ ...dataToSave, [field.name]: option[field.foreign_field] })}
+                            >
+                              {option[field.foreign_field]}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  ) : field.isEnum === true ? (
+                    <>
+                      <label>
+                        {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
+                      </label>
+                      <select
+                        name={field.name}
+                        required={field.required}
+                        value={dataToSave[field.name] || ''}
+                        onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
+                        className="form-control custom-input"
                       >
-                        {option[field.foreign_field]}
-                      </button>
-                    ))}
-                  </div>
+                        <option value="">Select {field.name}</option>
+                        {enums[field.possible_value]?.map((enumValue, idx) => (
+                          <option key={idx} value={enumValue}>
+                            {enumValue}
+                          </option>
+                        ))}
+                      </select>
+                    </>
+                  ) : (
+                    <>
+                      <label>
+                        {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
+                      </label>
+                      <input
+                        type={field.type}
+                        name={field.name}
+                        required={field.required}
+                        placeholder={customFieldLabels[field.name] || field.name}
+                        value={dataToSave[field.name] || ''}
+                        onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
+                        className="form-control custom-input"
+                      />
+                    </>
+                  )}
                 </div>
-              </>
-            ) : field.isEnum === true ? (
-              <>
-                <label>
-                  {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
-                </label>
-                <select
-                  name={field.name}
-                  required={field.required}
-                  value={dataToSave[field.name] || ''}
-                  onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
-                  className="form-control custom-input"
-                >
-                  <option value="">Select {field.name}</option>
-                  {enums[field.possible_value]?.map((enumValue, idx) => (
-                    <option key={idx} value={enumValue}>
-                      {enumValue}
-                    </option>
-                  ))}
-                </select>
-              </>
-            ) : (
-              <>
-                <label>
-                  {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
-                </label>
-                <input
-                  type={field.type}
-                  name={field.name}
-                  required={field.required}
-                  placeholder={customFieldLabels[field.name] || field.name}
-                  value={dataToSave[field.name] || ''}
-                  onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
-                  className="form-control custom-input"
-                />
-              </>
-            )}
-          </div>
-        );
-      }
-      return null;
-    })}
-  </div>
-<div className='d-flex justify-content-end'>
-  <button id="save_button" className="btn btn-success mt-4" onClick={handleCreate}>
-    Save
-  </button></div>
-</div>
+              );
+            }
+            return null;
+          })}
+        </div>
 
+        <button className="btn btn-success mt-4" onClick={handleCreate}>
+          Create
+        </button>
+      </div>
 
       {showToast && (
         <div

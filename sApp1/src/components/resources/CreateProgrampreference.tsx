@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiConfig from '../../config/apiConfig';
-//import 'bootstrap/dist/css/bootstrap.min.css';
+//import './CreateProgrampreference.css'; // Ensure this path is correct
 
 export type resourceMetaData = {
   resource: string;
@@ -19,20 +19,6 @@ const CreateProgrampreference = () => {
   const regex = /^(g_|archived|extra_data)/;
   const apiUrl = apiConfig.getResourceUrl("programpreference");
   const metadataUrl = apiConfig.getResourceMetaDataUrl("Programpreference");
-
-  const customFieldLabels: Record<string, string> = {
-    pref1: "Program Preference 1",
-    pref2: "Program Preference 2",
-    pref3: "Program Preference 3",
-    pref4: "Program Preference 4",
-    pref5: "Program Preference 5",
-    btech_cse: "B.Tech CSE",
-    btech_ece: "B.Tech ECE",
-    btech_aids: "B.Tech Artificial Intelligence & Data Science",
-    'Integrated Master of Technology CSE': "Integrated Master of Technology CSE",
-    'Integrated Master of Technology ECE': "Integrated Master of Technology ECE",
-    
-  };
 
   useEffect(() => {
     const fetchResMetaData = async () => {
@@ -57,7 +43,7 @@ const CreateProgrampreference = () => {
             }
           }
 
-          const enumFields = metaData[0].fieldValues.filter((field: any) => field.isEnum === true);
+          const enumFields = metaData[0].fieldValues.filter((field: any) => field.isEnum);
           for (const field of enumFields) {
             if (!fetchedEnum.has(field.possible_value)) {
               fetchedEnum.add(field.possible_value);
@@ -82,10 +68,13 @@ const CreateProgrampreference = () => {
       params.append('queryId', 'GET_ALL');
       params.append('session_id', ssid);
 
-      const response = await fetch(`${apiConfig.API_BASE_URL}/${foreignResource.toLowerCase()}?${params.toString()}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await fetch(
+        `${apiConfig.API_BASE_URL}/${foreignResource.toLowerCase()}?${params.toString()}`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -120,8 +109,9 @@ const CreateProgrampreference = () => {
     const params = new URLSearchParams();
     const jsonString = JSON.stringify(dataToSave);
     const base64Encoded = btoa(jsonString);
-    params.append('resource', base64Encoded);
     const ssid: any = sessionStorage.getItem('key');
+
+    params.append('resource', base64Encoded);
     params.append('session_id', ssid);
 
     const response = await fetch(`${apiUrl}?${params.toString()}`, {
@@ -140,29 +130,34 @@ const CreateProgrampreference = () => {
     setSearchQueries(prev => ({ ...prev, [fieldName]: value }));
   };
 
-  const getInputField = (field: any, index: number) => {
+  const getInputField = (field: any) => {
     if (field.foreign) {
       const options = foreignkeyData[field.foreign] || [];
-      const filteredOptions = options.filter((option) =>
+      const filteredOptions = options.filter((option: any) =>
         option[field.foreign_field].toLowerCase().includes((searchQueries[field.name] || '').toLowerCase())
       );
+
       return (
         <div>
-          <label>{field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}</label>
+          <label>
+            {field.required && <span style={{ color: 'red' }}>*</span>} {field.name}
+          </label>
           <div className="dropdown">
-            <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-              {dataToSave[field.name] ? options.find(item => item[field.foreign_field] === dataToSave[field.name])?.[field.foreign_field] || 'Select' : `Select ${field.name}`}
+            <button className="btn btn-secondary dropdown-toggle program-preference-input" type="button" data-bs-toggle="dropdown">
+              {dataToSave[field.name]
+                ? options.find((item: any) => item[field.foreign_field] === dataToSave[field.name])?.[field.foreign_field] || 'Select'
+                : `Select ${field.name}`}
             </button>
             <div className="dropdown-menu">
               <input
                 type="text"
-                className="form-control mb-2"
+                className="form-control mb-3 program-preference-input"
                 placeholder={`Search ${field.name}`}
                 value={searchQueries[field.name] || ''}
                 onChange={(e) => handleSearchChange(field.name, e.target.value)}
               />
               {filteredOptions.length > 0 ? (
-                filteredOptions.map((option, i) => (
+                filteredOptions.map((option: any, i: number) => (
                   <button
                     key={i}
                     className="dropdown-item"
@@ -181,17 +176,18 @@ const CreateProgrampreference = () => {
     } else if (field.isEnum) {
       return (
         <div>
-          <label>{field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}</label>
+          <label>
+            {field.required && <span style={{ color: 'red' }}>*</span>} {field.name}
+          </label>
           <select
-            className="form-select"
+            className="form-select program-preference-input"
             name={field.name}
             value={dataToSave[field.name] || ''}
             onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
           >
-            <option value="">Select {customFieldLabels[field.name]}</option>
-            {enums[field.possible_value]?.map((val, i) => (
-              <option key={i} value={val}>{customFieldLabels[val]}</option>
-              
+            <option value="">Select {field.name}</option>
+            {enums[field.possible_value]?.map((val: any, i: number) => (
+              <option key={i} value={val}>{val}</option>
             ))}
           </select>
         </div>
@@ -199,11 +195,14 @@ const CreateProgrampreference = () => {
     } else {
       return (
         <div>
-          <label>{field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}</label>
+          <label>
+            {field.required && <span style={{ color: 'red' }}>*</span>} {field.name}
+          </label>
           <input
-            type={field.type}
-            className="form-control"
+            type={field.type || 'text'}
+            className="form-control program-preference-input"
             name={field.name}
+            placeholder={`Enter ${field.name}`}
             value={dataToSave[field.name] || ''}
             onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
           />
@@ -212,29 +211,29 @@ const CreateProgrampreference = () => {
     }
   };
 
+  const renderFields = () => {
+    const rows = [];
+    const validFields = fields.filter(field => field.name !== 'id' && !regex.test(field.name));
+
+    for (let i = 0; i < validFields.length; i += 2) {
+      rows.push(
+        <div className="row" key={`row-${i}`}>
+          <div className="col-md-6 mb-3">{getInputField(validFields[i])}</div>
+          <div className="col-md-6 mb-3">
+            {validFields[i + 1] ? getInputField(validFields[i + 1]) : null}
+          </div>
+        </div>
+      );
+    }
+    return rows;
+  };
+
   return (
     <div className="container mt-4">
-      <h4 className='mt-5 fs-4'> Programme Preferences </h4>
-       <hr />
-      <div className="row">
-        {fields.map((field, index) => {
-          if (field.name !== 'id' && !regex.test(field.name)) {
-            const inputField = getInputField(field, index);
-            const isLastField = field.name === 'pref5';
-
-            return (
-              <div key={index} className="col-md-6 d-flex justify-content-between align-items-end"
-              style={{marginBottom: '250px'}}>
-                {inputField}
-                {isLastField && (
-                  <div className='d-flex justify-content-end'><button id="save_button" className="btn btn-success" onClick={handleCreate}>Save</button></div>
-                )}
-              </div>
-              
-            );
-          }
-          return null;
-        })}
+      <h2>Create Program Preference</h2>
+      {renderFields()}
+      <div className="d-flex justify-content-end mb-4">
+        <button className="btn btn-success" onClick={handleCreate}>Save</button>
       </div>
 
       {showToast && (

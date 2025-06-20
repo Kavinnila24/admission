@@ -25,6 +25,13 @@ const CreateExamdetails = () => {
     rank: "Rank",
     scorecardurl: "Scorecard URL",
   };
+  //Automatically set applicantid to "nil"
+  useEffect(() => {
+    setDataToSave((prev: any) => ({
+      ...prev,
+      applicantid: "nil",
+    }));
+  }, []);
 
   // Fetch metadata
   useEffect(() => {
@@ -170,7 +177,7 @@ const CreateExamdetails = () => {
     <div className="container mt-4">
   <div className="row">
     {fields.map((field, index) => {
-      if (field.name !== 'id' && !regex.test(field.name)) {
+      if (field.name !== 'id' && field.name !== 'applicantid' && !regex.test(field.name)) {
         return (
           <div key={index} className="col-md-6 mb-2">
             {field.foreign ? (
@@ -256,10 +263,10 @@ const CreateExamdetails = () => {
       return null;
     })}
   </div>
-<div className='d-flex justify-content-end'>
-  <button id="save_button" className="btn btn-success mt-4" onClick={handleCreate}>
-    Save
-  </button></div>
+
+  <button className="btn btn-success mt-4" onClick={handleCreate}>
+    Create
+  </button>
 </div>
 
     {showToast && (
