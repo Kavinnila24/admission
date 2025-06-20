@@ -180,12 +180,14 @@ const CreatePermaddress = () => {
 
   return (
     <div>
-      <div className="d-flex align-items-center gap-2 mt-4">
+      <div className="d-flex gap-2 mt-4">
         <input
           type="checkbox"
           id="sameAddress"
           checked={sameAsCurrent}
           onChange={handleCheckboxChange}
+          className="form-check-input"
+          style={{ width: "20px", height: "20px" }}
         />
         <label htmlFor="sameAddress" className="fs-5">
           Permanent Address same as Current Address
