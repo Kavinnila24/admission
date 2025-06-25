@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import apiConfig from '../../config/apiConfig';
+import React, { useState, useEffect } from "react";
+import apiConfig from "../../config/apiConfig";
 
 export type resourceMetaData = {
   resource: string;
@@ -30,11 +30,10 @@ const CreateApplicant = () => {
     photo: "Photo",
   };
 
-  // Automatically set applicantid to "nil" on component mount
   useEffect(() => {
-    setDataToSave((prev:any) => ({
+    setDataToSave((prev) => ({
       ...prev,
-      applicantid: 'nil',
+      applicantid: "nil",
     }));
   }, []);
 
@@ -45,8 +44,8 @@ const CreateApplicant = () => {
 
       try {
         const data = await fetch(metadataUrl, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
         });
 
         if (data.ok) {
@@ -70,25 +69,21 @@ const CreateApplicant = () => {
             }
           }
         } else {
-          console.error('Failed to fetch metadata:', data.statusText);
+          console.error("Failed to fetch metadata:", data.statusText);
         }
       } catch (error) {
-        console.error('Error fetching metadata:', error);
+        console.error("Error fetching metadata:", error);
       }
     };
 
     fetchResMetaData();
   }, []);
 
-  useEffect(() => {
-    console.log("data to save", dataToSave);
-  }, [dataToSave]);
-
   const fetchEnumData = async (enumName: string) => {
     try {
       const response = await fetch(`${apiConfig.API_BASE_URL}/${enumName}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       });
 
       if (response.ok) {
@@ -102,18 +97,22 @@ const CreateApplicant = () => {
     }
   };
 
-  const fetchForeignData = async (foreignResource: string, fieldName: string, foreignField: string) => {
+  const fetchForeignData = async (
+    foreignResource: string,
+    fieldName: string,
+    foreignField: string
+  ) => {
     try {
       const params = new URLSearchParams();
-      const ssid: any = sessionStorage.getItem('key');
-      params.append('queryId', 'GET_ALL');
-      params.append('session_id', ssid);
+      const ssid: any = sessionStorage.getItem("key");
+      params.append("queryId", "GET_ALL");
+      params.append("session_id", ssid);
 
       const response = await fetch(
         `${apiConfig.API_BASE_URL}/${foreignResource.toLowerCase()}?${params.toString()}`,
         {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
         }
       );
 
@@ -121,7 +120,7 @@ const CreateApplicant = () => {
         const data = await response.json();
         setForeignkeyData((prev) => ({
           ...prev,
-          [foreignResource]: data.resource
+          [foreignResource]: data.resource,
         }));
       } else {
         console.error(`Error fetching foreign data for ${fieldName}:`, response.status);
@@ -132,22 +131,19 @@ const CreateApplicant = () => {
   };
 
   const handleCreate = async () => {
-    const formData = new FormData();
-    const ssid: any = sessionStorage.getItem('key');
-    formData.append('session_id', ssid);
+    const params = new URLSearchParams();
+    const jsonString = JSON.stringify(dataToSave);
+    const base64Encoded = btoa(jsonString);
+    params.append("resource", base64Encoded);
 
-    const copy = { ...dataToSave };
-    for (const key in copy) {
-      if (key === 'photo' && copy[key] instanceof File) {
-        formData.append('photo', copy[key]);
-      } else {
-        formData.append(key, copy[key]);
-      }
-    }
+    const ssid: any = sessionStorage.getItem("key");
+    params.append("session_id", ssid);
 
-    const response = await fetch(`${apiUrl}`, {
-      method: 'POST',
-      body: formData,
+    const response = await fetch(apiUrl + `?` + params.toString(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     });
 
     if (response.ok) {
@@ -163,27 +159,33 @@ const CreateApplicant = () => {
 
   return (
     <div>
-      <h2 className='mt-5 fs-4'>Personal Details</h2>
+      <h2 className="mt-5 fs-4">Personal Details</h2>
       <hr />
 
       <div className="container mt-4">
         <div className="row">
           {fields.map((field, index) => {
-            // Exclude "id" and "applicantid" fields as well as any fields matching the regex
-            if (field.name !== 'id' && field.name !== 'applicantid' && !regex.test(field.name)) {
+            if (
+              field.name !== "id" &&
+              field.name !== "applicantid" &&
+              !regex.test(field.name)
+            ) {
               return (
                 <div key={index} className="col-md-6 mb-2">
-                  {field.name === 'photo' ? (
+                  {field.name === "photo" ? (
                     <>
                       <label>
-                        {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
+                        {field.required && (
+                          <span style={{ color: "red" }}>*</span>
+                        )}{" "}
+                        {customFieldLabels[field.name] || field.name}
                       </label>
                       <div className="d-flex">
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Upload your photo"
-                          value={dataToSave[field.name]?.name || ''}
+                          placeholder="Uploaded photo URL"
+                          value={dataToSave[field.name] || ""}
                           readOnly
                         />
                         <label className="btn btn-primary ms-2 mb-0">
@@ -195,7 +197,10 @@ const CreateApplicant = () => {
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
-                                setDataToSave({ ...dataToSave, [field.name]: file });
+                                setDataToSave((prev) => ({
+                                  ...prev,
+                                  [field.name]: file.name, // save as string
+                                }));
                               }
                             }}
                           />
@@ -205,54 +210,79 @@ const CreateApplicant = () => {
                   ) : field.foreign ? (
                     <>
                       <label>
-                        {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
+                        {field.required && (
+                          <span style={{ color: "red" }}>*</span>
+                        )}{" "}
+                        {customFieldLabels[field.name] || field.name}
                       </label>
                       <div className="dropdown">
                         <button
                           className="btn btn-secondary dropdown-toggle w-100"
                           type="button"
-                          id={`dropdownMenu-${field.name}`}
                           data-bs-toggle="dropdown"
-                          aria-haspopup="true"
-                          aria-expanded="false"
                         >
                           {dataToSave[field.name]
-                            ? (foreignkeyData[field.foreign]?.find((item) => item[field.foreign_field] === dataToSave[field.name])?.[field.foreign_field])
+                            ? foreignkeyData[field.foreign]?.find(
+                                (item) =>
+                                  item[field.foreign_field] ===
+                                  dataToSave[field.name]
+                              )?.[field.foreign_field]
                             : `Select ${field.name}`}
                         </button>
-                        <div className="dropdown-menu w-100" aria-labelledby={`dropdownMenu-${field.name}`}>
+                        <div className="dropdown-menu w-100">
                           <input
                             type="text"
                             className="form-control mb-2"
                             placeholder={`Search ${field.name}`}
-                            value={searchQueries[field.name] || ''}
-                            onChange={(e) => handleSearchChange(field.name, e.target.value)}
+                            value={searchQueries[field.name] || ""}
+                            onChange={(e) =>
+                              handleSearchChange(field.name, e.target.value)
+                            }
                           />
-                          {(foreignkeyData[field.foreign] || []).filter(option =>
-                            option[field.foreign_field]?.toLowerCase()?.includes((searchQueries[field.name] || '').toLowerCase())
-                          ).map((option, i) => (
-                            <button
-                              key={i}
-                              className="dropdown-item"
-                              type="button"
-                              onClick={() => setDataToSave({ ...dataToSave, [field.name]: option[field.foreign_field] })}
-                            >
-                              {option[field.foreign_field]}
-                            </button>
-                          ))}
+                          {(foreignkeyData[field.foreign] || [])
+                            .filter((option) =>
+                              option[field.foreign_field]
+                                ?.toLowerCase()
+                                ?.includes(
+                                  (searchQueries[field.name] || "").toLowerCase()
+                                )
+                            )
+                            .map((option, i) => (
+                              <button
+                                key={i}
+                                className="dropdown-item"
+                                type="button"
+                                onClick={() =>
+                                  setDataToSave({
+                                    ...dataToSave,
+                                    [field.name]: option[field.foreign_field],
+                                  })
+                                }
+                              >
+                                {option[field.foreign_field]}
+                              </button>
+                            ))}
                         </div>
                       </div>
                     </>
                   ) : field.isEnum === true ? (
                     <>
                       <label>
-                        {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
+                        {field.required && (
+                          <span style={{ color: "red" }}>*</span>
+                        )}{" "}
+                        {customFieldLabels[field.name] || field.name}
                       </label>
                       <select
                         name={field.name}
                         required={field.required}
-                        value={dataToSave[field.name] || ''}
-                        onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
+                        value={dataToSave[field.name] || ""}
+                        onChange={(e) =>
+                          setDataToSave({
+                            ...dataToSave,
+                            [e.target.name]: e.target.value,
+                          })
+                        }
                         className="form-control custom-input"
                       >
                         <option value="">Select {field.name}</option>
@@ -266,15 +296,25 @@ const CreateApplicant = () => {
                   ) : (
                     <>
                       <label>
-                        {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}
+                        {field.required && (
+                          <span style={{ color: "red" }}>*</span>
+                        )}{" "}
+                        {customFieldLabels[field.name] || field.name}
                       </label>
                       <input
                         type={field.type}
                         name={field.name}
                         required={field.required}
-                        placeholder={customFieldLabels[field.name] || field.name}
-                        value={dataToSave[field.name] || ''}
-                        onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
+                        placeholder={
+                          customFieldLabels[field.name] || field.name
+                        }
+                        value={dataToSave[field.name] || ""}
+                        onChange={(e) =>
+                          setDataToSave({
+                            ...dataToSave,
+                            [e.target.name]: e.target.value,
+                          })
+                        }
                         className="form-control custom-input"
                       />
                     </>
@@ -285,10 +325,16 @@ const CreateApplicant = () => {
             return null;
           })}
         </div>
-          <div className='d-flex justify-content-end'>
-        <button id='save_button' className="btn btn-success mt-4" onClick={handleCreate}>
-          Save
-        </button></div>
+
+        <div className="d-flex justify-content-end">
+          <button
+            id="save_button"
+            className="btn btn-success mt-4"
+            onClick={handleCreate}
+          >
+            Save
+          </button>
+        </div>
       </div>
 
       {showToast && (
@@ -296,7 +342,12 @@ const CreateApplicant = () => {
           className="toast-container position-fixed top-20 start-50 translate-middle p-3"
           style={{ zIndex: 1550 }}
         >
-          <div className="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+          <div
+            className="toast show"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+          >
             <div className="toast-header">
               <strong className="me-auto">Success</strong>
               <button
@@ -307,7 +358,9 @@ const CreateApplicant = () => {
                 onClick={() => setShowToast(false)}
               ></button>
             </div>
-            <div className="toast-body text-success text-center">Created successfully!</div>
+            <div className="toast-body text-success text-center">
+              Created successfully!
+            </div>
           </div>
         </div>
       )}
