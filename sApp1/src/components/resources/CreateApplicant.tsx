@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import apiConfig from "../../config/apiConfig";
+import { ImageUploader } from "../ImageUploader"; // adjust path
 
 export type resourceMetaData = {
   resource: string;
@@ -152,6 +153,38 @@ const CreateApplicant = () => {
       setDataToSave({});
     }
   };
+// const handleCreate = async () => {
+//   try {
+//     const ssid = sessionStorage.getItem("key");
+//
+//     const payload = {
+//       resource: dataToSave,
+//       session_id: ssid || '',
+//     };
+//
+//     const response = await fetch(apiUrl, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(payload),
+//     });
+//
+//     if (response.ok) {
+//       setShowToast(true);
+//       setTimeout(() => setShowToast(false), 3000);
+//       setDataToSave({});
+//     } else {
+//       const errorText = await response.text();
+//       console.error("Upload failed", errorText);
+//       alert("Error creating user");
+//     }
+//   } catch (error) {
+//     console.error("Network error:", error);
+//     alert("Something went wrong!");
+//   }
+// };
+
 
   const handleSearchChange = (fieldName: string, value: string) => {
     setSearchQueries((prev) => ({ ...prev, [fieldName]: value }));
@@ -173,41 +206,23 @@ const CreateApplicant = () => {
               return (
                 <div key={index} className="col-md-6 mb-2">
                   {field.name === "photo" ? (
-                    <>
-                      <label>
-                        {field.required && (
-                          <span style={{ color: "red" }}>*</span>
-                        )}{" "}
-                        {customFieldLabels[field.name] || field.name}
-                      </label>
-                      <div className="d-flex">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Uploaded photo URL"
-                          value={dataToSave[field.name] || ""}
-                          readOnly
-                        />
-                        <label className="btn btn-primary ms-2 mb-0">
-                          Upload
-                          <input
-                            type="file"
-                            accept="image/*"
-                            hidden
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                setDataToSave((prev) => ({
-                                  ...prev,
-                                  [field.name]: file.name, // save as string
-                                }));
-                              }
-                            }}
-                          />
+                      <div className="mb-3">
+                        <label className="form-label">
+                          {field.required && <span style={{ color: "red" }}>*</span>}{" "}
+                          {customFieldLabels[field.name] || field.name}
                         </label>
+                        <ImageUploader
+                          value={dataToSave[field.name] || ""}
+                          onChange={(dataUrl) =>
+                            setDataToSave((prev) => ({
+                              ...prev,
+                              [field.name]: dataUrl,
+                            }))
+                          }
+                          required={field.required}
+                        />
                       </div>
-                    </>
-                  ) : field.foreign ? (
+                    ) : field.foreign ? (
                     <>
                       <label>
                         {field.required && (
