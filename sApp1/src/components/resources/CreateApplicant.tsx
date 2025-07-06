@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import apiConfig from "../../config/apiConfig";
-import { ImageUploader } from "../ImageUploader"; // adjust path
+import { GridFSImageUploader } from "../GridFSImageUploader"; // GridFS image uploader
 
 export type resourceMetaData = {
   resource: string;
@@ -206,19 +206,22 @@ const CreateApplicant = () => {
               return (
                 <div key={index} className="col-md-6 mb-2">
                   {field.name === "photo" ? (
+                      // GridFS Image Upload - stores file ID in photo field
                       <div className="mb-3">
                         <label className="form-label">
                           {field.required && <span style={{ color: "red" }}>*</span>}{" "}
                           {customFieldLabels[field.name] || field.name}
                         </label>
-                        <ImageUploader
+                        <GridFSImageUploader
                           value={dataToSave[field.name] || ""}
-                          onChange={(dataUrl) =>
+                          onChange={(fileId: string) =>{
+                            console.log("🎯 CreateApplicant: Received fileId:", fileId);
                             setDataToSave((prev) => ({
                               ...prev,
-                              [field.name]: dataUrl,
+                              [field.name]: fileId, // Store GridFS file ID
                             }))
-                          }
+                          }}
+                          uploadToGridFS={true}
                           required={field.required}
                         />
                       </div>

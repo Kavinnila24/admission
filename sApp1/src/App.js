@@ -12,6 +12,7 @@ import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Edit from './components/Edit/Edit';
 import Layout from "./Layout";
+import Page13 from "./components/Page13";
 
 
 
@@ -31,6 +32,7 @@ function App() {
   <Route path='/exam' element={<Exam />}/>
   <Route path='/education' element={<Education />}/>
   <Route path='/payment' element={<Payment />}/>
+  <Route path='/page13' element={<Page13 />}/>
   
 </Route>
 </Routes>
