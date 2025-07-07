@@ -1,0 +1,60 @@
+{
+
+"programpreference": {
+
+  "cluster" : "traveler_db",
+  "ui" : false,
+  "api" : true,
+  "fields" : {
+    "id": {
+
+     "name" : "id",
+     "required" : "true",
+     "type" : "String"
+     },
+    "pref1": {
+
+     "name" : "pref1",
+     "required" : "true",
+     "is_enum" : "true",
+      "possible_value" :"Program", 
+     "type" : "String"
+     },
+    "pref2": {
+
+     "name" : "pref2",
+     "required" : "true",
+     "is_enum" : "true",
+      "possible_value" :"Program", 
+     "type" : "String"
+     },
+    "pref3": {
+
+     "name" : "pref3",
+     "required" : "true",
+     "is_enum" : "true",
+      "possible_value" :"Program", 
+     "type" : "String"
+     },
+    "pref4": {
+
+     "name" : "pref4",
+     "required" : "true",
+     "is_enum" : "true",
+      "possible_value" :"Program", 
+     "type" : "String"
+     },
+    "pref5": {
+
+     "name" : "pref5",
+     "required" : "true",
+     "is_enum" : "true",
+      "possible_value" :"Program", 
+     "type" : "String"
+     }
+   
+  }
+ }
+
+}
+

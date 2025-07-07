@@ -1,52 +1,59 @@
-import React, { useRef, useState, useImperativeHandle, forwardRef } from "react";
-
-const MAX_FILE_SIZE = 128 * 1024; // 128 KB
-
-export const readImageFile = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    if (!["image/jpeg", "image/jpg", "image/png"].includes(file.type)) {
-      reject(new Error("Please select a JPG or PNG file."));
-      return;
-    }
-    if (file.size > MAX_FILE_SIZE) {
-      reject(new Error("File size exceeds 128KB limit."));
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (reader.result) {
-        resolve(reader.result as string);
-      } else {
-        reject(new Error("Failed to read file."));
-      }
-    };
-    reader.onerror = () => reject(new Error("Error reading file."));
-    reader.readAsDataURL(file);
-  });
-};
+import React, { useRef, useState, forwardRef } from "react";
 
 type ImageUploaderProps = {
-  value: string;
-  onChange: (dataUrl: string) => void;
+  value: string; // URL or filename returned by server
+  onChange: (fileUrl: string) => void; // callback with uploaded file URL
   required?: boolean;
 };
 
 export const ImageUploader = forwardRef<any, ImageUploaderProps>(
   ({ value, onChange, required = false }, ref) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [previewUrl, setPreviewUrl] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
+    const [uploading, setUploading] = useState<boolean>(false);
+
+    const MAX_FILE_SIZE = 128 * 1024; // 128 KB
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
 
+      // Validate type and size
+      if (!["image/jpeg", "image/jpg", "image/png"].includes(file.type)) {
+        setError("Please select a JPG or PNG file.");
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        setError("File size exceeds 128KB limit.");
+        return;
+      }
+
+      // Preview
+      const localUrl = URL.createObjectURL(file);
+      setPreviewUrl(localUrl);
+      setError(null);
+      setUploading(true);
+
       try {
-        const dataUrl = await readImageFile(file);
-        onChange(dataUrl);
-        setError(null);
-      } catch (err) {
-        setError((err as Error).message);
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch("http://localhost:8080/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Upload failed.");
+        }
+
+        const result = await response.json(); // expects { url: "uploaded/path.jpg" }
+        onChange(result.url);
+      } catch (err: any) {
+        setError(err.message || "Failed to upload.");
+      } finally {
+        setUploading(false);
       }
     };
 
@@ -55,7 +62,7 @@ export const ImageUploader = forwardRef<any, ImageUploaderProps>(
     return (
       <div>
         <button className="btn btn-primary" type="button" onClick={openFileDialog}>
-          Upload Photo
+          {uploading ? "Uploading..." : "Upload Photo"}
         </button>
         <input
           type="file"
@@ -65,9 +72,14 @@ export const ImageUploader = forwardRef<any, ImageUploaderProps>(
           style={{ display: "none" }}
         />
         {error && <div className="alert alert-danger mt-2">{error}</div>}
-        {value && (
+        {(previewUrl || value) && (
           <div className="mt-3">
-            <img src={value} alt="Preview" className="img-thumbnail" style={{ maxWidth: "200px" }} />
+            <img
+              src={previewUrl || value}
+              alt="Preview"
+              className="img-thumbnail"
+              style={{ maxWidth: "200px" }}
+            />
           </div>
         )}
       </div>

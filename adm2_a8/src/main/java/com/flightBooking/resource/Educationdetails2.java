@@ -122,8 +122,6 @@ import com.flightBooking.service.*;
 		metaData.addField(archived_timeField);
 
 		Field applicantidField = new Field("applicantid", "String");
-		applicantidField.setRequired(true);
-		applicantidField.setForeign(new Foreign("Applicant"));
 		metaData.addField(applicantidField);
 
 		Field levelField = new Field("level", "String");
@@ -268,7 +266,7 @@ import com.flightBooking.service.*;
 			map.put("archived", archived);
 		if(archived_time != null)
 			map.put("archived_time", archived_time);
-		if(validateApplicantid(add))
+		if(applicantid != null)
 			map.put("applicantid", applicantid);
 		if(validateLevel(add))
 			map.put("level", level);
@@ -607,12 +605,6 @@ import com.flightBooking.service.*;
 
 	public void unSetApplicantid() {
 		this.applicantid = null;
-	}
-
-	public boolean validateApplicantid(boolean add) throws ApplicationException {
-		if(add && applicantid == null)
-			throw new ApplicationException(ExceptionSeverity.ERROR, "Requierd validation Failed[applicantid]");
-		return applicantid != null;
 	}
 
 	public String getLevel() {

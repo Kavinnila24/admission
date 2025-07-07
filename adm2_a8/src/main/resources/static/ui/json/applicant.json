@@ -1,6 +1,6 @@
 {
 
-"educationdetails2": {
+"applicant": {
 
   "cluster" : "traveler_db",
   "ui" : false,
@@ -12,51 +12,53 @@
      "required" : "true",
      "type" : "String"
      },
-    "applicantid": {
+    "fullname12": {
 
-     "name" : "applicantid",
-     "required" : "false",
-     "type" : "String"
-     },
-    "level": {
-
-     "name" : "level",
+     "name" : "fullname12",
      "required" : "true",
      "type" : "String"
      },
-    "board": {
+    "fullnamead": {
 
-     "name" : "board",
+     "name" : "fullnamead",
      "required" : "true",
      "type" : "String"
      },
-    "specialization": {
+    "mobile": {
 
-     "name" : "specialization",
+     "name" : "mobile",
      "required" : "true",
      "type" : "String"
      },
-    "schoolname": {
+    "email": {
 
-     "name" : "schoolname",
+     "name" : "email",
      "required" : "true",
      "type" : "String"
      },
-    "grading": {
+    "abc": {
 
-     "name" : "grading",
+     "name" : "abc",
      "required" : "true",
      "type" : "String"
      },
-    "passingyear": {
+    "gender": {
 
-     "name" : "passingyear",
+     "name" : "gender",
      "required" : "true",
+     "is_enum" : "true",
+      "possible_value" :"Gender", 
      "type" : "String"
      },
-    "marksobtained": {
+    "dob": {
 
-     "name" : "marksobtained",
+     "name" : "dob",
+     "required" : "true",
+     "type" : "Date"
+     },
+    "photo": {
+
+     "name" : "photo",
      "required" : "true",
      "type" : "String"
      }

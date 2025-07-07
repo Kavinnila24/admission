@@ -1,19 +1,24 @@
 {
-  "gender": {
-    "purpose" : "possible_value",
-    "values": {
-      "male": {
-        "id": "male",
-        "name": "Male"
-      },
-      "female": {
-        "id": "female",
-        "name": "Female"
-      },
-      "others": {
-        "id": "others",
-        "name": "Others"
-      }
-    }
-  }
+
+"gender": {
+
+  "purpose" : "POSSIBLE_VALUE",
+  "values" : {
+    "male": {
+
+     "id":"male", 
+      "name":"male" 
+   },
+    "female": {
+
+     "id":"female", 
+      "name":"female" 
+   },
+    "others": {
+
+     "id":"others", 
+      "name":"others" 
+   }
+}
+}
 }
