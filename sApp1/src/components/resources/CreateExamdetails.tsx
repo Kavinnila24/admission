@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
     import apiConfig from '../../config/apiConfig';
+    import { GridFSImageUploader } from "../GridFSImageUploader"; // GridFS file uploader
 
 export type resourceMetaData = {
   resource: string;
@@ -23,7 +24,7 @@ const CreateExamdetails = () => {
     rollno: "Roll No",
     score: "Score",
     rank: "Rank",
-    scorecardurl: "Scorecard URL",
+    scorecardurl: "Scorecard Upload",
   };
   //Automatically set applicantid to "nil"
   useEffect(() => {
@@ -180,7 +181,29 @@ const CreateExamdetails = () => {
       if (field.name !== 'id' && field.name !== 'applicantid' && !regex.test(field.name)) {
         return (
           <div key={index} className="col-md-6 mb-2">
-            {field.foreign ? (
+            {field.name === 'scorecardurl' ? (
+              // GridFS File Upload - stores file ID in scorecardurl field
+              <div className="mb-3">
+                <label className="form-label">
+                  {field.required && <span style={{ color: "red" }}>*</span>}{" "}
+                  {customFieldLabels[field.name] || field.name}
+                </label>
+                <GridFSImageUploader
+                  value={dataToSave[field.name] || ""}
+                  onChange={(fileId: string) => {
+                    console.log("🎯 CreateExamdetails: Received fileId:", fileId);
+                    setDataToSave((prev: any) => ({
+                      ...prev,
+                      [field.name]: fileId, // Store GridFS file ID
+                    }));
+                  }}
+                  uploadToGridFS={true}
+                  required={field.required}
+                  allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"]}
+                  placeholder="Click to upload scorecard (Image or PDF)"
+                />
+              </div>
+            ) : field.foreign ? (
               <>
                 <label>
                   {field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}

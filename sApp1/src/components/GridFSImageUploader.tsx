@@ -1,7 +1,7 @@
 import React, { useRef, useState, useImperativeHandle, forwardRef, useEffect } from "react";
 import gridFSImageService, { FileUploadResponse } from '../services/GridFSImageService';
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB for documents
 
 export const readImageFile = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -100,6 +100,19 @@ export const GridFSImageUploader = forwardRef<any, ImageUploaderProps>(
       console.log("HI");
       if (!file) return;
 
+      // Validate file type based on allowedTypes prop
+      if (!allowedTypes.includes(file.type)) {
+        const allowedExtensions = allowedTypes.map(type => type.split('/')[1]).join(', ').toUpperCase();
+        setError(`Please select a ${allowedExtensions} file.`);
+        return;
+      }
+
+      // Validate file size
+      if (file.size > MAX_FILE_SIZE) {
+        setError("File size exceeds 5MB limit.");
+        return;
+      }
+
       setIsUploading(true);
       setError(null);
       setUploadProgress(0);
@@ -108,7 +121,7 @@ export const GridFSImageUploader = forwardRef<any, ImageUploaderProps>(
         if (uploadToGridFS) {
           // Upload to GridFS
           const uploadMetadata = {
-            category: 'image',
+            category: file.type.startsWith('image/') ? 'image' : 'document',
             uploadedBy: sessionStorage.getItem('userId') || 'anonymous',
             originalSize: file.size,
             ...metadata
@@ -126,9 +139,13 @@ export const GridFSImageUploader = forwardRef<any, ImageUploaderProps>(
             throw new Error(response.message || 'Upload failed');
           }
         } else {
-          // Legacy base64 upload
-          const dataUrl = await readImageFile(file);
-          onChange(dataUrl);
+          // Legacy base64 upload (only for images)
+          if (file.type.startsWith('image/')) {
+            const dataUrl = await readImageFile(file);
+            onChange(dataUrl);
+          } else {
+            throw new Error('Base64 upload only supports images. Use GridFS for other file types.');
+          }
         }
         
         setError(null);
@@ -257,16 +274,34 @@ export const GridFSImageUploader = forwardRef<any, ImageUploaderProps>(
             </div>
           ) : imageUrl && showPreview ? (
             <div className="uploaded-image-container">
-              <img 
-                src={imageUrl} 
-                alt="Uploaded preview" 
-                className="img-thumbnail mb-2" 
-                style={{ 
-                  maxWidth: "200px", 
-                  maxHeight: "150px",
-                  objectFit: "contain"
-                }} 
-              />
+              {fileInfo && fileInfo.contentType && fileInfo.contentType.startsWith('image/') ? (
+                <img 
+                  src={imageUrl} 
+                  alt="Uploaded preview" 
+                  className="img-thumbnail mb-2" 
+                  style={{ 
+                    maxWidth: "200px", 
+                    maxHeight: "150px",
+                    objectFit: "contain"
+                  }} 
+                />
+              ) : (
+                <div className="document-preview mb-2" style={{ 
+                  width: "200px", 
+                  height: "150px",
+                  border: "2px dashed #ddd",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#f8f9fa"
+                }}>
+                  <i className="bi bi-file-earmark-pdf display-4 text-muted mb-2"></i>
+                  <small className="text-muted text-center">
+                    {fileInfo ? fileInfo.filename : 'Document uploaded'}
+                  </small>
+                </div>
+              )}
               {fileInfo && (
                 <div className="file-info mb-2">
                   <small className="text-muted d-block">
@@ -296,11 +331,11 @@ export const GridFSImageUploader = forwardRef<any, ImageUploaderProps>(
               <i className="bi bi-cloud-upload display-6 text-muted mb-2"></i>
               <p className="mb-1">{placeholder}</p>
               <small className="text-muted">
-                {allowedTypes.map(type => type.split('/')[1]).join(', ').toUpperCase()} • Max 2MB
+                {allowedTypes.map(type => type.split('/')[1]).join(', ').toUpperCase()} • Max 5MB
                 {uploadToGridFS && <span className="d-block">Stored in GridFS</span>}
               </small>
               {dragOver && (
-                <p className="text-primary mt-2 mb-0">Drop your image here!</p>
+                <p className="text-primary mt-2 mb-0">Drop your file here!</p>
               )}
             </div>
           )}
@@ -318,7 +353,7 @@ export const GridFSImageUploader = forwardRef<any, ImageUploaderProps>(
         {imageUrl && !error && !isUploading && (
           <div className="alert alert-success mt-2 mb-0">
             <i className="bi bi-check-circle me-2"></i>
-            {uploadToGridFS ? `Image stored in GridFS (ID: ${value})` : 'Image uploaded successfully!'}
+            {uploadToGridFS ? `File stored in GridFS (ID: ${value})` : 'File uploaded successfully!'}
           </div>
         )}
 
