@@ -1,0 +1,34 @@
+{
+
+"program": {
+
+  "purpose" : "POSSIBLE_VALUE",
+  "values" : {
+    "btech_cse": {
+
+     "id":"btech_cse", 
+      "name":"btech_cse" 
+   },
+    "btech_ece": {
+
+     "id":"btech_ece", 
+      "name":"btech_ece" 
+   },
+    "btech_aids": {
+
+     "id":"btech_aids", 
+      "name":"btech_aids" 
+   },
+    "Integrated Master of Technology CSE": {
+
+     "id":"Integrated Master of Technology CSE", 
+      "name":"Integrated Master of Technology CSE" 
+   },
+    "Integrated Master of Technology ECE": {
+
+     "id":"Integrated Master of Technology ECE", 
+      "name":"Integrated Master of Technology ECE" 
+   }
+}
+}
+}

@@ -1,0 +1,50 @@
+{
+
+"guardian": {
+
+  "cluster" : "traveler_db",
+  "ui" : false,
+  "api" : true,
+  "fields" : {
+    "id": {
+
+     "name" : "id",
+     "required" : "true",
+     "type" : "String"
+     },
+    "applicantid": {
+
+     "name" : "applicantid",
+     "required" : "false",
+     "type" : "String"
+     },
+    "name": {
+
+     "name" : "name",
+     "required" : "true",
+     "type" : "String"
+     },
+    "relation": {
+
+     "name" : "relation",
+     "required" : "true",
+     "type" : "String"
+     },
+    "mobile": {
+
+     "name" : "mobile",
+     "required" : "true",
+     "type" : "String"
+     },
+    "email": {
+
+     "name" : "email",
+     "required" : "true",
+     "type" : "String"
+     }
+   
+  }
+ }
+
+}
+
