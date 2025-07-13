@@ -48,8 +48,8 @@ project_path: C:\Users\sunhi\IdeaProjects\rasp-backend
 content_root_package_path: \\src/main/java/com/rasp/app
 reference_package_path: com.rasp.app
 generate_resource_path: C:\Users\sunhi\OneDrive\Desktop\RASP_Designer\generated_backends
-clientId: "myClient"
-clientSecret: "laO3gJoKkKhcF9uRRGEul5XjpOzGVric" # Replace with your actual secret
+clientId: "admission-rest-api"
+clientSecret: "6neWV6pfJVKKKgEuAqpYtUSO5a4br9fB" # Replace with your actual secret
 keycloakTokenUrl: "http://localhost:4000/realms/myRealm/protocol/openid-connect/token"
 keycloakUrl: "http://localhost:4000/admin/realms/myRealm"
 ResourcePack: "com.rasp.app.resource"

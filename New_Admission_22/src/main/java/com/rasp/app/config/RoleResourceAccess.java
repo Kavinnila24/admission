@@ -30,7 +30,7 @@ public class RoleResourceAccess {
     //  private final ApplicationContext applicationContext; // Access ApplicationContext
     private static RoleResourceAccess instance;
 
-    private static final String clientId="myClient";
+    private static final String clientId="admission-rest-api";
 
 //    @Autowired
 //    private CacheManager cacheManager;
@@ -159,6 +159,9 @@ public class RoleResourceAccess {
 
 
             //baseResource = accessLogic(role, action, resourceName, resourceId, userId);
+            System.out.println("role is: " + role);
+            System.out.println("action is: " + action);
+            System.out.println("resourceName is: " + resourceName);
             baseResource = accessLogic(role, action, resourceName );
 
 

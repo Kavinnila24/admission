@@ -28,8 +28,8 @@ public class KeycloakTokenFilter extends OncePerRequestFilter {
     private static final String INTROSPECT_URL = "http://localhost:4000/realms/myRealm/protocol/openid-connect/token/introspect";
     private static final String REFRESH_URL = "http://localhost:4000/realms/myRealm/protocol/openid-connect/token";
 
-    private static final String CLIENT_ID = "myClient";
-    private static final String CLIENT_SECRET = "laO3gJoKkKhcF9uRRGEul5XjpOzGVric";
+    private static final String CLIENT_ID = "admission-rest-api";
+    private static final String CLIENT_SECRET = "6neWV6pfJVKKKgEuAqpYtUSO5a4br9fB";
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
