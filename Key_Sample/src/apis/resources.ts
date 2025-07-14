@@ -3,7 +3,7 @@ import { getCookie } from "./enum";
 
 export const fetchResources = async (appName: string) => {
   const response = await fetch(
-    `http://localhost:8000/api/getResources/${appName}`,
+    `http://localhost:8082/api/getResources/${appName}`,
     {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -61,7 +61,7 @@ export const deleteResource = async (
   resourceName: string
 ): Promise<string> => {
   const response = await fetch(
-    `http://localhost:8000/api/deleteResource/${appName}/${resourceName}`,
+    `http://localhost:8082/api/deleteResource/${appName}/${resourceName}`,
     {
       method: "DELETE",
       headers: {
@@ -86,7 +86,7 @@ export const saveResource = async (data: {
     fieldValues: any;
   };
 }): Promise<any> => {
-  const response = await fetch("http://localhost:8000/api/saveResource", {
+  const response = await fetch("http://localhost:8082/api/saveResource", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

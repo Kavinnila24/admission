@@ -1,0 +1,31 @@
+/* Personal.css */
+.personal-container {
+  background: #f2f5fb;
+  padding: 2rem;
+}
+
+.instruction-box {
+  background: #fff;
+  padding: 1.5rem;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.instruction-box h5 {
+  font-size: 18px;
+  text-decoration: underline;
+}
+
+.form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  max-width: 1300px;
+  margin: 0 auto;
+}

@@ -1,3 +1,129 @@
 #id-1 {
+  width: 1920px;
+  height: 2400px;
 }
 
+#id-3 {
+  width: 1920px;
+  height: 289.533px;
+  display: flex;
+  background: #eff9fa;
+}
+
+#id-5 {
+  width: 19rem;
+  height: 17rem;
+  background: #eff9fa;
+  border-left: 100px;
+}
+
+#id-7 {
+  background: #eff9fa;
+  width: 18rem;
+  height: 11rem;
+  display: flex;
+  justify-content: center;
+}
+
+#id-9 {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+}
+
+#id-B {
+  background: #eff9fa;
+  width: 18rem;
+  height: 5rem;
+  font-weight: 300;
+  display: flex;
+  justify-content: center;
+}
+
+#id-D {
+  font-weight: 500;
+  text-align: center;
+  width: 15rem;
+}
+
+#id-F {
+  width: 1820px;
+  height: 289.533px;
+  background: linear-gradient(41deg, #00BCD4 -1.52%, #00BCD4 31.75%, #03A9F4 99.66%);
+  display: flex;
+}
+
+#id-H {
+  width:1400px;
+}
+
+#id-J {
+  color: #FFF;
+  text-align: left;
+  font-family: "Sans-serif";
+  font-size: 34px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+#id-L {
+  height: 1550px;
+  display: flex;
+}
+
+#id-N {
+  width: 19rem;
+  height: 1500px;
+  background-color: rgba(255, 255, 255, 0.90);
+  filter: drop-shadow(0px 2px 20px rgba(205, 205, 205, 0.50));
+}
+
+#id-P {
+  background: #fcfcfc;
+}
+
+#id-R {
+  padding-right: 20px;
+}
+
+#id-T ,
+#id-V ,
+
+#id-X ,
+
+#id-Z ,
+
+#id-11 ,
+
+#id-13 ,
+
+#id-15 {
+  height: 3rem;
+  background: #000000;
+  color: black;
+  border-bottom-right-radius: 29px;
+  border-top-right-radius: 29px;
+  font-family: "Kumbh Sans", "Poppins", "Nunito", "Rubik", "Segoe UI", sans-serif;
+
+}
+
+#id-17 {
+  height: 1500px;
+}
+
+
+
+
+#profile{
+  height:100px;
+  width:100px;
+  border-radius: 50%;
+  display:flex;
+}
+
+#id-profilepic{
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+}

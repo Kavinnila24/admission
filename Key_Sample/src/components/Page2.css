@@ -1,3 +1,66 @@
-#id-3 {
+#id-19 {
+  background: #eff9fa;
+  width: 18rem;
+  height: 18rem;
+  display: flex;
+  justify-content: center;
+}
+
+#id-1B {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+}
+
+#id-1D {
+  background: #eff9fa;
+  width: 18rem;
+  height: 18rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#id-1F {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+}
+
+#id-1H {
+}
+
+#id-1J {
+  width: 19rem;
+  height: 17rem;
+}
+
+#id-1L {
+  background: #eff9fa;
+  width: 18rem;
+  height: 11rem;
+  display: flex;
+  justify-content: center;
+}
+
+#id-1N {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+}
+
+#id-1P {
+  background: #eff9fa;
+  width: 18rem;
+  height: 5rem;
+  font-weight: 300;
+  display: flex;
+  justify-content: center;
+}
+
+#id-1R {
+  font-weight: 500;
+  text-align: center;
+  width: 15rem;
 }
 
