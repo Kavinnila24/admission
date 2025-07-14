@@ -57,12 +57,15 @@ class GridFSImageService {
   }
 
   async getFileInfo(fileId: string): Promise<FileInfo> {
+    const params = new URLSearchParams();
+    const queryId: any = "GET_ALL";
+    params.append("queryId", queryId);
     const accessToken = getCookie("access_token");
     if (!accessToken) {
       throw new Error("Access token not found");
     }
 
-    const response = await fetch(`${apiConfig.API_BASE_URL}/file_info?fileName=${fileId}`, {
+    const response = await fetch(`${apiConfig.API_BASE_URL}/file_info?fileName=${fileId}&${params.toString()}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
