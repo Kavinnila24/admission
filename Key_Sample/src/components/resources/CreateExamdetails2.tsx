@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiConfig from '../../config/apiConfig';
+import { GridFSImageUploader } from "../GridFSImageUploader"; // 👈 Importer added
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchForeignResource } from '../../apis/resources';
 import { fetchEnum } from '../../apis/enum';
@@ -38,7 +39,7 @@ const CreateExamdetails2 = () => {
         rollno: "Roll No",
         score: "Score",
         rank: "Rank",
-        scorecardurl: "Scorecard URL",
+        scorecardurl: "Scorecard Upload", // 👈 Label updated
     };
 
     useEffect(() => {
@@ -143,7 +144,13 @@ const CreateExamdetails2 = () => {
                         if (field.name !== 'id' && field.name !== 'applicantid' && !regex.test(field.name)) {
                             return (
                                 <div key={index} className="col-md-6 mb-2">
-                                    {field.foreign ? (
+                                    {/* 👇 New conditional rendering for file upload */}
+                                    {field.name === 'scorecardurl' ? (
+                                        <div className="mb-3">
+                                            <label className="form-label">{field.required && <span style={{ color: "red" }}>*</span>} {customFieldLabels[field.name] || field.name}</label>
+                                            <GridFSImageUploader value={dataToSave[field.name] || ""} onChange={(fileId: string) => setDataToSave((prev: any) => ({ ...prev, [field.name]: fileId }))}  required={field.required} allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"]} placeholder="Click to upload scorecard (Image or PDF)" />
+                                        </div>
+                                    ) : field.foreign ? (
                                         <>
                                             <label>{field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}</label>
                                             <div className="dropdown">

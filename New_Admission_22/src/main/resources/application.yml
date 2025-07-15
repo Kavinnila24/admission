@@ -27,6 +27,12 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:4000/realms/myRealm
+  data:
+    mongodb:
+      database: traveler_db
+      uri: mongodb://localhost:23017/traveler_db
+      host: localhost
+      port: 23017
 
 jwt:
   auth:
@@ -54,7 +60,5 @@ keycloakTokenUrl: "http://localhost:4000/realms/myRealm/protocol/openid-connect/
 keycloakUrl: "http://localhost:4000/admin/realms/myRealm"
 ResourcePack: "com.rasp.app.resource"
 HelperPack: "com.rasp.app.helper"
-
-
 
 

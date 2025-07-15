@@ -3,6 +3,7 @@ import apiConfig from '../../config/apiConfig';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchForeignResource } from '../../apis/resources';
 import { fetchEnum } from '../../apis/enum';
+import { GridFSImageUploader } from "../GridFSImageUploader"; // Added import
 
 export type resourceMetaData = {
   resource: string;
@@ -145,7 +146,13 @@ const CreateEducationdetails = () => {
                         if (field.name !== 'id' && field.name !== 'applicantid' && !regex.test(field.name)) {
                             return (
                                 <div key={index} className="col-md-6 mb-2">
-                                    {field.foreign ? (
+                                    {/* Added conditional rendering for file upload */}
+                                    {field.name === 'marksobtained' ? (
+                                        <div className="mb-3">
+                                            <label className="form-label">{field.required && <span style={{ color: "red" }}>*</span>} {customFieldLabels[field.name] || field.name}</label>
+                                            <GridFSImageUploader value={dataToSave[field.name] || ""} onChange={(fileId: string) => setDataToSave((prev: any) => ({ ...prev, [field.name]: fileId }))}  required={field.required} allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"]} placeholder="Upload marksheet or certificate" />
+                                        </div>
+                                    ) : field.foreign ? (
                                         <>
                                             <label>{field.required && <span style={{ color: 'red' }}>*</span>} {customFieldLabels[field.name] || field.name}</label>
                                             <div className="dropdown">
