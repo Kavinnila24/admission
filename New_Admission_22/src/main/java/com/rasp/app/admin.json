@@ -1,0 +1,32 @@
+{
+
+"admin": {
+
+  "cluster" : "rasp_db",
+  "ui" : false,
+  "api" : true,
+  "fields" : {
+    "id": {
+
+     "name" : "id",
+     "required" : "true",
+     "type" : "String"
+     },
+    "email": {
+
+     "name" : "email",
+     "required" : "true",
+     "type" : "String"
+     },
+    "password": {
+
+     "name" : "password",
+     "required" : "true",
+     "type" : "String"
+     }
+   
+  }
+ }
+
+}
+
