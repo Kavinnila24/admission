@@ -37,6 +37,7 @@ import com.rasp.app.service.*;
 	private String g_status = null;
 	private String archived = null;
 	private Long archived_time = null;
+	private String applicant_id = null;
 	private String pref1 = null;
 	private String pref2 = null;
 	private String pref3 = null;
@@ -55,6 +56,7 @@ import com.rasp.app.service.*;
 	public static String FIELD_G_STATUS = "g_status";
 	public static String FIELD_ARCHIVED = "archived";
 	public static String FIELD_ARCHIVED_TIME = "archived_time";
+	public static String FIELD_APPLICANT_ID = "applicant_id";
 	public static String FIELD_PREF1 = "pref1";
 	public static String FIELD_PREF2 = "pref2";
 	public static String FIELD_PREF3 = "pref3";
@@ -115,6 +117,10 @@ import com.rasp.app.service.*;
 		Field archived_timeField = new Field("archived_time", "long");
 		metaData.addField(archived_timeField);
 
+		Field applicant_idField = new Field("applicant_id", "String");
+		applicant_idField.setForeign(new Foreign("User"));
+		metaData.addField(applicant_idField);
+
 		Field pref1Field = new Field("pref1", "String");
 		pref1Field.setEnum(true);
 		pref1Field.setPossible_value("Program");
@@ -170,6 +176,7 @@ import com.rasp.app.service.*;
 		this.g_status = obj.g_status;
 		this.archived = obj.archived;
 		this.archived_time = obj.archived_time;
+		this.applicant_id = obj.applicant_id;
 		this.pref1 = obj.pref1;
 		this.pref2 = obj.pref2;
 		this.pref3 = obj.pref3;
@@ -212,6 +219,8 @@ import com.rasp.app.service.*;
 			map.put("archived", archived);
 		if(archived_time != null)
 			map.put("archived_time", archived_time);
+		if(applicant_id != null)
+			map.put("applicant_id", applicant_id);
 		if(pref1 != null)
 			map.put("pref1", pref1);
 		if(pref2 != null)
@@ -250,6 +259,8 @@ import com.rasp.app.service.*;
 			map.put("archived", archived);
 		if(archived_time != null)
 			map.put("archived_time", archived_time);
+		if(applicant_id != null)
+			map.put("applicant_id", applicant_id);
 		if(validatePref1(add))
 			map.put("pref1", pref1);
 		if(validatePref2(add))
@@ -282,6 +293,7 @@ import com.rasp.app.service.*;
 		g_status = (String) map.get("g_status");
 		archived = (String) map.get("archived");
 		archived_time = (map.get("archived_time") == null ? null : ((Number) map.get("archived_time")).longValue());
+		applicant_id = (String) map.get("applicant_id");
 		pref1 = (String) map.get("pref1");
 		pref2 = (String) map.get("pref2");
 		pref3 = (String) map.get("pref3");
@@ -335,6 +347,10 @@ import com.rasp.app.service.*;
 		Object archived_timeObj = map.get("archived_time");
 		if(archived_timeObj != null)
 			archived_time = new Long(archived_timeObj.toString());
+
+		Object applicant_idObj = map.get("applicant_id");
+		if(applicant_idObj != null)
+			applicant_id = applicant_idObj.toString();
 
 		Object pref1Obj = map.get("pref1");
 		if(pref1Obj != null)
@@ -552,6 +568,22 @@ import com.rasp.app.service.*;
 
 	public void unSetArchived_time() {
 		this.archived_time = null;
+	}
+
+	public String getApplicant_id() {
+		return applicant_id;
+	}
+
+	public String getApplicant_idEx() {
+		return applicant_id != null ? applicant_id : "";
+	}
+
+	public void setApplicant_id(String applicant_id) {
+		this.applicant_id = applicant_id;
+	}
+
+	public void unSetApplicant_id() {
+		this.applicant_id = null;
 	}
 
 	public String getPref1() {

@@ -37,7 +37,7 @@ import com.rasp.app.service.*;
 	private String g_status = null;
 	private String archived = null;
 	private Long archived_time = null;
-	private String applicantid = null;
+	private String applicant_id = null;
 	private String examtype = null;
 	private String rollno = null;
 	private String score = null;
@@ -56,7 +56,7 @@ import com.rasp.app.service.*;
 	public static String FIELD_G_STATUS = "g_status";
 	public static String FIELD_ARCHIVED = "archived";
 	public static String FIELD_ARCHIVED_TIME = "archived_time";
-	public static String FIELD_APPLICANTID = "applicantid";
+	public static String FIELD_APPLICANT_ID = "applicant_id";
 	public static String FIELD_EXAMTYPE = "examtype";
 	public static String FIELD_ROLLNO = "rollno";
 	public static String FIELD_SCORE = "score";
@@ -117,8 +117,9 @@ import com.rasp.app.service.*;
 		Field archived_timeField = new Field("archived_time", "long");
 		metaData.addField(archived_timeField);
 
-		Field applicantidField = new Field("applicantid", "String");
-		metaData.addField(applicantidField);
+		Field applicant_idField = new Field("applicant_id", "String");
+		applicant_idField.setForeign(new Foreign("User"));
+		metaData.addField(applicant_idField);
 
 		Field examtypeField = new Field("examtype", "String");
 		examtypeField.setRequired(true);
@@ -165,7 +166,7 @@ import com.rasp.app.service.*;
 		this.g_status = obj.g_status;
 		this.archived = obj.archived;
 		this.archived_time = obj.archived_time;
-		this.applicantid = obj.applicantid;
+		this.applicant_id = obj.applicant_id;
 		this.examtype = obj.examtype;
 		this.rollno = obj.rollno;
 		this.score = obj.score;
@@ -208,8 +209,8 @@ import com.rasp.app.service.*;
 			map.put("archived", archived);
 		if(archived_time != null)
 			map.put("archived_time", archived_time);
-		if(applicantid != null)
-			map.put("applicantid", applicantid);
+		if(applicant_id != null)
+			map.put("applicant_id", applicant_id);
 		if(examtype != null)
 			map.put("examtype", examtype);
 		if(rollno != null)
@@ -248,8 +249,8 @@ import com.rasp.app.service.*;
 			map.put("archived", archived);
 		if(archived_time != null)
 			map.put("archived_time", archived_time);
-		if(applicantid != null)
-			map.put("applicantid", applicantid);
+		if(applicant_id != null)
+			map.put("applicant_id", applicant_id);
 		if(validateExamtype(add))
 			map.put("examtype", examtype);
 		if(validateRollno(add))
@@ -282,7 +283,7 @@ import com.rasp.app.service.*;
 		g_status = (String) map.get("g_status");
 		archived = (String) map.get("archived");
 		archived_time = (map.get("archived_time") == null ? null : ((Number) map.get("archived_time")).longValue());
-		applicantid = (String) map.get("applicantid");
+		applicant_id = (String) map.get("applicant_id");
 		examtype = (String) map.get("examtype");
 		rollno = (String) map.get("rollno");
 		score = (String) map.get("score");
@@ -337,9 +338,9 @@ import com.rasp.app.service.*;
 		if(archived_timeObj != null)
 			archived_time = new Long(archived_timeObj.toString());
 
-		Object applicantidObj = map.get("applicantid");
-		if(applicantidObj != null)
-			applicantid = applicantidObj.toString();
+		Object applicant_idObj = map.get("applicant_id");
+		if(applicant_idObj != null)
+			applicant_id = applicant_idObj.toString();
 
 		Object examtypeObj = map.get("examtype");
 		if(examtypeObj != null)
@@ -559,20 +560,20 @@ import com.rasp.app.service.*;
 		this.archived_time = null;
 	}
 
-	public String getApplicantid() {
-		return applicantid;
+	public String getApplicant_id() {
+		return applicant_id;
 	}
 
-	public String getApplicantidEx() {
-		return applicantid != null ? applicantid : "";
+	public String getApplicant_idEx() {
+		return applicant_id != null ? applicant_id : "";
 	}
 
-	public void setApplicantid(String applicantid) {
-		this.applicantid = applicantid;
+	public void setApplicant_id(String applicant_id) {
+		this.applicant_id = applicant_id;
 	}
 
-	public void unSetApplicantid() {
-		this.applicantid = null;
+	public void unSetApplicant_id() {
+		this.applicant_id = null;
 	}
 
 	public String getExamtype() {

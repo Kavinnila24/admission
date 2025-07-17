@@ -12,12 +12,17 @@
      "required" : "true",
      "type" : "String"
      },
-    "applicantid": {
+    "applicant_id": {
 
-     "name" : "applicantid",
-     "required" : "false",
-     "type" : "String"
-     },
+      "name" : "applicant_id",
+      "required" : "false",
+      "foreign" : {
+        "resource" :"User"
+      },
+
+      "type" : "String"
+    },
+
     "level": {
 
      "name" : "level",

@@ -5,6 +5,7 @@ import com.rasp.app.helper.*;
 import com.rasp.app.service.*;
 public class Registry {
 		public static void register(){
+				 HelperManager.getInstance().register(AdminHelper.getInstance());
 				 HelperManager.getInstance().register(ApplicantHelper.getInstance());
 				 HelperManager.getInstance().register(CourseeHelper.getInstance());
 				 HelperManager.getInstance().register(CurrentaddressHelper.getInstance());
@@ -19,7 +20,9 @@ public class Registry {
 				 HelperManager.getInstance().register(ResourceRoleHelper.getInstance());
 				 HelperManager.getInstance().register(RoleResourcePermissionHelper.getInstance());
 				 HelperManager.getInstance().register(RoleUserResInstanceHelper.getInstance());
+				 HelperManager.getInstance().register(UserHelper.getInstance());
 				 HelperManager.getInstance().register(UsersHelper.getInstance());
+				 ServiceManager.getInstance().register(new AdminService());
 				 ServiceManager.getInstance().register(new ApplicantService());
 				 ServiceManager.getInstance().register(new CourseeService());
 				 ServiceManager.getInstance().register(new CurrentaddressService());
@@ -34,6 +37,7 @@ public class Registry {
 				 ServiceManager.getInstance().register(new ResourceRoleService());
 				 ServiceManager.getInstance().register(new RoleResourcePermissionService());
 				 ServiceManager.getInstance().register(new RoleUserResInstanceService());
+				 ServiceManager.getInstance().register(new UserService());
 				 ServiceManager.getInstance().register(new UsersService());
 		}
 }

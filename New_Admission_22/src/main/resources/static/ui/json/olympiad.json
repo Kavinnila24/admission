@@ -14,10 +14,14 @@
      },
     "applicant_id": {
 
-     "name" : "applicant_id",
-     "required" : "false",
-     "type" : "String"
-     },
+      "name" : "applicant_id",
+      "required" : "false",
+      "foreign" : {
+        "resource" :"User"
+      },
+
+      "type" : "String"
+    },
     "name": {
 
      "name" : "name",

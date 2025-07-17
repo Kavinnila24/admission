@@ -37,7 +37,7 @@ import com.rasp.app.service.*;
 	private String g_status = null;
 	private String archived = null;
 	private Long archived_time = null;
-	private String applicantid = null;
+	private String applicant_id = null;
 	private String line1 = null;
 	private String line2 = null;
 	private String city = null;
@@ -56,7 +56,7 @@ import com.rasp.app.service.*;
 	public static String FIELD_G_STATUS = "g_status";
 	public static String FIELD_ARCHIVED = "archived";
 	public static String FIELD_ARCHIVED_TIME = "archived_time";
-	public static String FIELD_APPLICANTID = "applicantid";
+	public static String FIELD_APPLICANT_ID = "applicant_id";
 	public static String FIELD_LINE1 = "line1";
 	public static String FIELD_LINE2 = "line2";
 	public static String FIELD_CITY = "city";
@@ -117,8 +117,9 @@ import com.rasp.app.service.*;
 		Field archived_timeField = new Field("archived_time", "long");
 		metaData.addField(archived_timeField);
 
-		Field applicantidField = new Field("applicantid", "String");
-		metaData.addField(applicantidField);
+		Field applicant_idField = new Field("applicant_id", "String");
+		applicant_idField.setForeign(new Foreign("User"));
+		metaData.addField(applicant_idField);
 
 		Field line1Field = new Field("line1", "String");
 		line1Field.setRequired(true);
@@ -165,7 +166,7 @@ import com.rasp.app.service.*;
 		this.g_status = obj.g_status;
 		this.archived = obj.archived;
 		this.archived_time = obj.archived_time;
-		this.applicantid = obj.applicantid;
+		this.applicant_id = obj.applicant_id;
 		this.line1 = obj.line1;
 		this.line2 = obj.line2;
 		this.city = obj.city;
@@ -208,8 +209,8 @@ import com.rasp.app.service.*;
 			map.put("archived", archived);
 		if(archived_time != null)
 			map.put("archived_time", archived_time);
-		if(applicantid != null)
-			map.put("applicantid", applicantid);
+		if(applicant_id != null)
+			map.put("applicant_id", applicant_id);
 		if(line1 != null)
 			map.put("line1", line1);
 		if(line2 != null)
@@ -248,8 +249,8 @@ import com.rasp.app.service.*;
 			map.put("archived", archived);
 		if(archived_time != null)
 			map.put("archived_time", archived_time);
-		if(applicantid != null)
-			map.put("applicantid", applicantid);
+		if(applicant_id != null)
+			map.put("applicant_id", applicant_id);
 		if(validateLine1(add))
 			map.put("line1", line1);
 		if(validateLine2(add))
@@ -282,7 +283,7 @@ import com.rasp.app.service.*;
 		g_status = (String) map.get("g_status");
 		archived = (String) map.get("archived");
 		archived_time = (map.get("archived_time") == null ? null : ((Number) map.get("archived_time")).longValue());
-		applicantid = (String) map.get("applicantid");
+		applicant_id = (String) map.get("applicant_id");
 		line1 = (String) map.get("line1");
 		line2 = (String) map.get("line2");
 		city = (String) map.get("city");
@@ -337,9 +338,9 @@ import com.rasp.app.service.*;
 		if(archived_timeObj != null)
 			archived_time = new Long(archived_timeObj.toString());
 
-		Object applicantidObj = map.get("applicantid");
-		if(applicantidObj != null)
-			applicantid = applicantidObj.toString();
+		Object applicant_idObj = map.get("applicant_id");
+		if(applicant_idObj != null)
+			applicant_id = applicant_idObj.toString();
 
 		Object line1Obj = map.get("line1");
 		if(line1Obj != null)
@@ -559,20 +560,20 @@ import com.rasp.app.service.*;
 		this.archived_time = null;
 	}
 
-	public String getApplicantid() {
-		return applicantid;
+	public String getApplicant_id() {
+		return applicant_id;
 	}
 
-	public String getApplicantidEx() {
-		return applicantid != null ? applicantid : "";
+	public String getApplicant_idEx() {
+		return applicant_id != null ? applicant_id : "";
 	}
 
-	public void setApplicantid(String applicantid) {
-		this.applicantid = applicantid;
+	public void setApplicant_id(String applicant_id) {
+		this.applicant_id = applicant_id;
 	}
 
-	public void unSetApplicantid() {
-		this.applicantid = null;
+	public void unSetApplicant_id() {
+		this.applicant_id = null;
 	}
 
 	public String getLine1() {

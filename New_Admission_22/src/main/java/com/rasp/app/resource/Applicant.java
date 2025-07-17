@@ -37,6 +37,7 @@ import com.rasp.app.service.*;
 	private String g_status = null;
 	private String archived = null;
 	private Long archived_time = null;
+	private String applicant_id = null;
 	private String fullname12 = null;
 	private String fullnamead = null;
 	private String mobile = null;
@@ -58,6 +59,7 @@ import com.rasp.app.service.*;
 	public static String FIELD_G_STATUS = "g_status";
 	public static String FIELD_ARCHIVED = "archived";
 	public static String FIELD_ARCHIVED_TIME = "archived_time";
+	public static String FIELD_APPLICANT_ID = "applicant_id";
 	public static String FIELD_FULLNAME12 = "fullname12";
 	public static String FIELD_FULLNAMEAD = "fullnamead";
 	public static String FIELD_MOBILE = "mobile";
@@ -121,6 +123,10 @@ import com.rasp.app.service.*;
 		Field archived_timeField = new Field("archived_time", "long");
 		metaData.addField(archived_timeField);
 
+		Field applicant_idField = new Field("applicant_id", "String");
+		applicant_idField.setForeign(new Foreign("User"));
+		metaData.addField(applicant_idField);
+
 		Field fullname12Field = new Field("fullname12", "String");
 		fullname12Field.setRequired(true);
 		metaData.addField(fullname12Field);
@@ -180,6 +186,7 @@ import com.rasp.app.service.*;
 		this.g_status = obj.g_status;
 		this.archived = obj.archived;
 		this.archived_time = obj.archived_time;
+		this.applicant_id = obj.applicant_id;
 		this.fullname12 = obj.fullname12;
 		this.fullnamead = obj.fullnamead;
 		this.mobile = obj.mobile;
@@ -225,6 +232,8 @@ import com.rasp.app.service.*;
 			map.put("archived", archived);
 		if(archived_time != null)
 			map.put("archived_time", archived_time);
+		if(applicant_id != null)
+			map.put("applicant_id", applicant_id);
 		if(fullname12 != null)
 			map.put("fullname12", fullname12);
 		if(fullnamead != null)
@@ -269,6 +278,8 @@ import com.rasp.app.service.*;
 			map.put("archived", archived);
 		if(archived_time != null)
 			map.put("archived_time", archived_time);
+		if(applicant_id != null)
+			map.put("applicant_id", applicant_id);
 		if(validateFullname12(add))
 			map.put("fullname12", fullname12);
 		if(validateFullnamead(add))
@@ -307,6 +318,7 @@ import com.rasp.app.service.*;
 		g_status = (String) map.get("g_status");
 		archived = (String) map.get("archived");
 		archived_time = (map.get("archived_time") == null ? null : ((Number) map.get("archived_time")).longValue());
+		applicant_id = (String) map.get("applicant_id");
 		fullname12 = (String) map.get("fullname12");
 		fullnamead = (String) map.get("fullnamead");
 		mobile = (String) map.get("mobile");
@@ -363,6 +375,10 @@ import com.rasp.app.service.*;
 		Object archived_timeObj = map.get("archived_time");
 		if(archived_timeObj != null)
 			archived_time = new Long(archived_timeObj.toString());
+
+		Object applicant_idObj = map.get("applicant_id");
+		if(applicant_idObj != null)
+			applicant_id = applicant_idObj.toString();
 
 		Object fullname12Obj = map.get("fullname12");
 		if(fullname12Obj != null)
@@ -592,6 +608,22 @@ import com.rasp.app.service.*;
 
 	public void unSetArchived_time() {
 		this.archived_time = null;
+	}
+
+	public String getApplicant_id() {
+		return applicant_id;
+	}
+
+	public String getApplicant_idEx() {
+		return applicant_id != null ? applicant_id : "";
+	}
+
+	public void setApplicant_id(String applicant_id) {
+		this.applicant_id = applicant_id;
+	}
+
+	public void unSetApplicant_id() {
+		this.applicant_id = null;
 	}
 
 	public String getFullname12() {

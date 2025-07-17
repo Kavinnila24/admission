@@ -114,6 +114,7 @@ import com.rasp.app.service.*;
 		metaData.addField(archived_timeField);
 
 		Field applicant_idField = new Field("applicant_id", "String");
+		applicant_idField.setForeign(new Foreign("User"));
 		metaData.addField(applicant_idField);
 
 		Field nameField = new Field("name", "String");

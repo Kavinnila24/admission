@@ -12,6 +12,16 @@
      "required" : "true",
      "type" : "String"
      },
+    "applicant_id": {
+
+      "name" : "applicant_id",
+      "required" : "false",
+      "foreign" : {
+        "resource" :"User"
+      },
+
+      "type" : "String"
+    },
     "fullname12": {
 
      "name" : "fullname12",

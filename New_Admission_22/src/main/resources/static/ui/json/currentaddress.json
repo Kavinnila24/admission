@@ -16,6 +16,10 @@
 
      "name" : "applicant_id",
      "required" : "false",
+      "foreign" : {
+      "resource" :"User"
+      },
+
      "type" : "String"
      },
     "line1": {
