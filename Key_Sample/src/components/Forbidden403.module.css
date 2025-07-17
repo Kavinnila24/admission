@@ -1,0 +1,47 @@
+@import "./SharedLayout.module.css";
+
+.forbiddenWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  gap: 1rem;
+}
+
+.errorCode {
+  font-size: 6rem;
+  font-weight: 700;
+  color: #dc3545;
+  margin: 0;
+}
+
+.errorMessage {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.errorDescription {
+  font-size: 1.1rem;
+  color: #666;
+  max-width: 400px;
+}
+
+.backButton {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #00BCD4;
+  color: white;
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: #0196a7;
+}
