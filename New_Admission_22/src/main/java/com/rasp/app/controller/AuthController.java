@@ -1,13 +1,20 @@
 // Updated AuthController.java
 package com.rasp.app.controller;
 
+import com.rasp.app.dto.AdminValidationRequest;
+import com.rasp.app.dto.AdminValidationResponse;
+import com.rasp.app.dto.LoginRequest;
+import com.rasp.app.dto.LoginResponse;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -59,8 +66,156 @@ public class AuthController {
     private String authenticationType;
 
 
+    /**
+     * Validates admin secret password
+     */
+    @PostMapping("/validate-admin")
+    public ResponseEntity<AdminValidationResponse> validateAdmin(@RequestBody AdminValidationRequest request) {
+        try {
+            System.out.println("Admin validation request received: " + request);
+            // Simple hardcoded admin secret validation
+            String providedPassword = request.getAdmin_registration_password();
+            boolean isValid = "admin@123".equals(providedPassword);
+            
+            AdminValidationResponse response = new AdminValidationResponse(isValid);
 
+            if (isValid) {
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        } catch (Exception e) {
+            AdminValidationResponse errorResponse = new AdminValidationResponse(false, "Error validating admin credentials");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
 
+    /**
+     * Enhanced login endpoint that determines user role from Keycloak JWT token
+     */
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        try {
+            String username = loginRequest.getUsername();
+            String password = loginRequest.getPassword();
+
+            // Call the existing login logic based on authentication type
+            if ("implicit".equalsIgnoreCase(authenticationType)) {
+                return handleImplicitFlowLogin(username, password, response);
+            } else {
+                // For authorization code flow, redirect to Keycloak
+                String authUrl = keycloakAuthUrl
+                        + "?client_id=" + clientId
+                        + "&response_type=code"
+                        + "&scope=openid profile email"
+                        + "&redirect_uri=" + redirectUri;
+
+                LoginResponse loginResponse = new LoginResponse();
+                loginResponse.setSuccess(false);
+                loginResponse.setMessage("Redirect to: " + authUrl);
+
+                return ResponseEntity.status(HttpStatus.FOUND)
+                        .header("Location", authUrl)
+                        .body(loginResponse);
+            }
+        } catch (Exception e) {
+            LoginResponse errorResponse = new LoginResponse(false, "Login failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    private ResponseEntity<LoginResponse> handleImplicitFlowLogin(String username, String password, HttpServletResponse response) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("grant_type", "password");
+        requestBody.add("client_id", clientId);
+        requestBody.add("client_secret", clientSecret);
+        requestBody.add("username", username);
+        requestBody.add("password", password);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<Map> tokenResponse = restTemplate.exchange(keycloakTokenUrl, HttpMethod.POST, request, Map.class);
+
+        if (!tokenResponse.getStatusCode().is2xxSuccessful()) {
+            LoginResponse errorResponse = new LoginResponse(false, "Invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+
+        Map<String, String> body = tokenResponse.getBody();
+        String accessToken = body.get("access_token");
+        String refreshToken = body.get("refresh_token");
+
+        // Set cookies
+        setCookie(response, "access_token", accessToken, 900); // 15 minutes expiry
+        setCookie(response, "refresh_token", refreshToken, 86400); // 24 hours expiry
+
+        // Parse JWT token to get user role and custom_id
+        String userRole = "USER"; // Default role
+        String userId = username; // Default to username
+        
+        try {
+            // Extract user role from token (this would need JWT parsing)
+            // For now, check if user exists in Admin table to determine role
+            String filter_params = "queryId=GET_ALL&filter=email:" + username;
+            
+            // Check if user is admin
+            try {
+                RestTemplate adminRestTemplate = new RestTemplate();
+                HttpHeaders adminHeaders = new HttpHeaders();
+                adminHeaders.setBearerAuth(accessToken);
+                
+                ResponseEntity<String> adminResponse = adminRestTemplate.exchange(
+                    "http://localhost:8082/api/admin?" + filter_params,
+                    HttpMethod.GET,
+                    new HttpEntity<>(adminHeaders),
+                    String.class
+                );
+                
+                if (adminResponse.getStatusCode().is2xxSuccessful()) {
+                    // User found in admin table
+                    userRole = "ADMIN";
+                    // Parse response to get admin ID
+                    // For now, use a simple approach
+                }
+            } catch (Exception e) {
+                // User not found in admin table, check user table
+                try {
+                    RestTemplate userRestTemplate = new RestTemplate();
+                    HttpHeaders userHeaders = new HttpHeaders();
+                    userHeaders.setBearerAuth(accessToken);
+                    
+                    ResponseEntity<String> userResponse = userRestTemplate.exchange(
+                        "http://localhost:8082/api/user?" + filter_params,
+                        HttpMethod.GET,
+                        new HttpEntity<>(userHeaders),
+                        String.class
+                    );
+                    
+                    if (userResponse.getStatusCode().is2xxSuccessful()) {
+                        userRole = "USER";
+                        // Parse response to get user ID
+                    }
+                } catch (Exception ex) {
+                    // Default to USER role if both checks fail
+                    userRole = "USER";
+                }
+            }
+        } catch (Exception e) {
+            // Default to USER if role detection fails
+            userRole = "USER";
+        }
+
+        // Create successful login response with role information
+        LoginResponse loginResponse = new LoginResponse(accessToken, userRole, userId, "Login successful");
+        loginResponse.setSuccess(true);
+
+        return ResponseEntity.ok(loginResponse);
+    }
+
+    // Keep existing login method for backward compatibility
     @GetMapping("/login")
     public void login(@RequestParam(value = "username", required = false) String username,
                       @RequestParam(value = "password", required = false) String password,
@@ -136,7 +291,7 @@ public class AuthController {
         redirectHeaders.setLocation(URI.create(redirectUrl));
 
 //        setCookie(response, "access_token", newAccessToken, 900);
-//        setCookie(response, "refresh_token", newRefreshToken, 86400);
+//        setCookie(response, "refresh_token", newRefreshToken, 86400;
 //
         return new ResponseEntity<>(redirectHeaders, HttpStatus.FOUND);
 //        return ResponseEntity.ok("Login successful");
@@ -212,100 +367,6 @@ public class AuthController {
         }
 
         return ResponseEntity.ok("User created successfully");
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestParam String newUsername,
-                                               @RequestParam String newPassword,
-                                               @RequestParam String newFirstName,
-                                               @RequestParam String newLastName,
-                                               @RequestParam String newEmail,
-                                               @RequestParam String resource,@RequestBody Map<String,Object> map) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ApplicationException {
-
-        String myClass= "com.example.demo.resource."+resource;
-        Class<BaseResource> clazz = (Class<BaseResource>) Class.forName(myClass);
-
-
-        BaseResource baseResource= clazz.getDeclaredConstructor().newInstance();
-        baseResource.convertMapToResource(map);
-
-        String myHelper= "com.example.demo.helper."+resource+"Helper";
-        Class<BaseHelper> clazz2=(Class<BaseHelper>) Class.forName(myHelper) ;
-        BaseHelper baseHelper=clazz2.getDeclaredConstructor().newInstance();
-        baseHelper.add(baseResource);
-
-
-        System.out.println( baseResource.getId()+"1111111111111111222222222222222");
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        // Step 1: Get Admin Access Token using Client Credentials Grant
-        MultiValueMap<String, String> tokenRequestBody = new LinkedMultiValueMap<>();
-        tokenRequestBody.add("grant_type", "client_credentials");
-        tokenRequestBody.add("client_id", clientId);
-        tokenRequestBody.add("client_secret", clientSecret);
-
-        HttpEntity<MultiValueMap<String, String>> tokenRequest = new HttpEntity<>(tokenRequestBody, headers);
-        ResponseEntity<Map> tokenResponse = restTemplate.exchange(
-                keycloakTokenUrl,
-                HttpMethod.POST,
-                tokenRequest,
-                Map.class
-        );
-
-        if (!tokenResponse.getStatusCode().is2xxSuccessful()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Failed to get admin token");
-        }
-
-        String accessToken = (String) tokenResponse.getBody().get("access_token");
-
-        // Step 2: Create New User in Keycloak
-        HttpHeaders userHeaders = new HttpHeaders();
-        userHeaders.setContentType(MediaType.APPLICATION_JSON);
-        userHeaders.setBearerAuth(accessToken);
-
-        Map<String, Object> userPayload = new HashMap<>();
-        userPayload.put("username", newUsername);
-        userPayload.put("email", newEmail);
-        userPayload.put("enabled", true);
-        userPayload.put("emailVerified", true);
-        userPayload.put("firstName", newFirstName);
-        userPayload.put("lastName", newLastName);
-
-        Map<String, Object> credentials = new HashMap<>();
-        credentials.put("type", "password");
-        credentials.put("value", newPassword);
-        credentials.put("temporary", false);
-
-        // Custom Attributes
-        Map<String, List<String>> attributes = new HashMap<>();
-        attributes.put("custom_id", List.of( baseResource.getId())); // Correct: List of Strings
-
-        userPayload.put("attributes", attributes); // or any value you want
-        userPayload.put("credentials", List.of(credentials));
-
-        HttpEntity<Map<String, Object>> userRequest = new HttpEntity<>(userPayload, userHeaders);
-
-        ResponseEntity<String> userResponse = restTemplate.exchange(
-                keycloakUrl + "/users",
-                HttpMethod.POST,
-                userRequest,
-                String.class
-        );
-
-
-
-        if (!userResponse.getStatusCode().is2xxSuccessful()) {
-            return ResponseEntity.status(userResponse.getStatusCode()).body("Failed to create user");
-        }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        return  ResponseEntity.ok("User created successfully");
-
-
     }
 
 //    @PostMapping("/add-client-role")

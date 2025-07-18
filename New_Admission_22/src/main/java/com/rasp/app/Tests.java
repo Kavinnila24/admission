@@ -9,13 +9,13 @@ import java.lang.reflect.InvocationTargetException;
 public class Tests {
 
     public static void main(String[] args) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ApplicationException {
-        String myClass= "com.example.demo.resource.Batch";
+        String myClass= "com.rasp.app.resource.Batch";
         Class<BaseResource> clazz = (Class<BaseResource>) Class.forName(myClass);
 
         BaseResource baseResource= clazz.getDeclaredConstructor().newInstance();
 //baseResource.convertMapToResource(map);
 
-        String myHelper= "com.example.demo.helper.BatchHelper";
+        String myHelper= "com.rasp.app.helper.BatchHelper";
         Class<BaseHelper> clazz2=(Class<BaseHelper>) Class.forName(myHelper) ;
         BaseHelper baseHelper=clazz2.getDeclaredConstructor().newInstance();
         baseHelper.add(baseResource);

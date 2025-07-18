@@ -21,15 +21,12 @@ public class IamController {
     }
 
     @PostMapping("/add_user")
-    public ResponseEntity<?> registerUser(@RequestParam String newUsername,
+    public ResponseEntity<?> registerUser(@RequestParam String newEmail,
                                                @RequestParam String newPassword,
-                                               @RequestParam String newFirstName,
-                                               @RequestParam String newLastName,
-                                               @RequestParam String newEmail,
-
                                                @RequestParam String resource,@RequestBody Map<String,Object> map) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ApplicationException {
 
-        return iamService.addUser(newUsername,newPassword,newFirstName,newLastName,newEmail,resource,map);
+        // Use email as username and for first/last name (can be improved later)
+        return iamService.addUser(newEmail, newPassword, "User", "User", newEmail, resource, map);
 
     }
 
