@@ -4,6 +4,8 @@ import { GridFSImageUploader } from "../GridFSImageUploader"; // GridFS image up
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchForeignResource } from '../../apis/resources';
 import { fetchEnum } from '../../apis/enum';
+// Update the import to include the new function
+import { getCurrentUserId, autoPopulateUserId, fetchUserByEmail } from '../../utils/userUtils';
 
 export type resourceMetaData = {
   resource: string;
@@ -47,11 +49,16 @@ const CreateApplicant = () => {
   };
 
   useEffect(() => {
+  // Simple approach - just get the already-stored database ID
+  const userId = getCurrentUserId();
+  if (userId) {
     setDataToSave((prev) => ({
       ...prev,
-      applicantid: "nil",
+      applicant_id: userId,
     }));
-  }, []);
+    console.log('Auto-populated applicant_id:', userId);
+  }
+}, []);
 
   const fetchForeignData = async (
   foreignResource: string,
@@ -174,7 +181,7 @@ const CreateApplicant = () => {
           {fields.map((field, index) => {
             if (
               field.name !== "id" &&
-              field.name !== "applicantid" &&
+              field.name !== "applicant_id" &&
               !regex.test(field.name)
             ) {
               return (

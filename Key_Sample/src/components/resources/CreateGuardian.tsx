@@ -3,6 +3,7 @@ import apiConfig from '../../config/apiConfig';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchForeignResource } from '../../apis/resources';
 import { fetchEnum } from '../../apis/enum';
+import { getCurrentUserId, autoPopulateUserId } from '../../utils/userUtils';
 
 export type resourceMetaData = {
   resource: string;
@@ -19,7 +20,7 @@ const getCookie = (name: string): string | null => {
 const CreateGuardian = () => {
     const [resMetaData, setResMetaData] = useState<resourceMetaData[]>([]);
     const [fields, setFields] = useState<any[]>([]);
-    const [dataToSave, setDataToSave] = useState<any>({});
+    const [dataToSave, setDataToSave] = useState<Record<string, any>>({});
     const [showToast, setShowToast] = useState<any>(false);
     const [foreignkeyData, setForeignkeyData] = useState<Record<string, any[]>>({});
     const [searchQueries, setSearchQueries] = useState<Record<string, string>>({});
@@ -41,7 +42,15 @@ const CreateGuardian = () => {
     };
 
     useEffect(() => {
-        setDataToSave((prev: any) => ({ ...prev, applicantid: "nil" }));
+      // Simple approach - just get the already-stored database ID
+      const userId = getCurrentUserId();
+      if (userId) {
+        setDataToSave((prev) => ({
+          ...prev,
+          applicant_id: userId,
+        }));
+        console.log('Auto-populated applicant_id:', userId);
+      }
     }, []);
 
     const fetchForeignData = async (foreignResource: string, fieldName: string, foreignField: string) => {
@@ -122,7 +131,7 @@ const CreateGuardian = () => {
         if (response.ok) {
             setShowToast(true);
             setTimeout(() => setShowToast(false), 3000);
-            setDataToSave({ applicantid: 'nil' });
+            setDataToSave({});
         }
     };
 
@@ -139,7 +148,7 @@ const CreateGuardian = () => {
             <div className="container mt-4">
                 <div className="row">
                     {fields.map((field, index) => {
-                        if (field.name !== 'id' && field.name !== 'applicantid' && !regex.test(field.name)) {
+                        if (field.name !== 'id' && field.name !== 'applicant_id' && !regex.test(field.name)) {
                             return (
                                 <div key={index} className="col-md-6 mb-2">
                                     {field.foreign ? (
