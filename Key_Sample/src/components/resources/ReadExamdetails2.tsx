@@ -6,7 +6,6 @@ import {
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useQuery } from '@tanstack/react-query';
-// 1. Import your existing GridFSImageService
 import { gridFSImageService } from '../../services/GridFSImageService';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -23,6 +22,15 @@ const getCookie = (name: string): string | null => {
     return null;
 };
 
+// Mappings for user-friendly column headers
+const headerMappings: { [key: string]: string } = {
+    examtype: 'Exam Type',
+    rollno: 'Roll Number',
+    score: 'Score / Percentile',
+    rank: 'Rank',
+    scorecardurl: 'Scorecard'
+};
+
 const ReadExamdetails2 = () => {
     const [rowData, setRowData] = useState<any[]>([]);
     const [colDef1, setColDef1] = useState<any[]>([]);
@@ -36,14 +44,12 @@ const ReadExamdetails2 = () => {
 
     const userId = sessionStorage.getItem('user_id');
 
-    // 2. NEW: Custom cell renderer component for the PDF button
     const PdfCellRenderer = (props: any) => {
         const fileId = props.value;
         const [isLoading, setIsLoading] = useState(false);
 
         const handlePdfClick = async () => {
             if (!fileId) return;
-
             setIsLoading(true);
             try {
                 const pdfUrl = await gridFSImageService.getImageUrl(fileId);
@@ -126,15 +132,13 @@ const ReadExamdetails2 = () => {
 
     useEffect(() => {
         const data = fetchData || [];
-        const fields = requiredFields.filter(field => field !== 'id' && field !== 'applicant_id') || [];
+        const fields = requiredFields.filter(field => field !== 'id' && field !== 'applicant_id');
 
         const columns = fields.map(field => {
-            // 3. NEW: Logic to use the custom renderer for your PDF field
-            // IMPORTANT: Change 'file_retrive' to the actual name of your PDF file ID field.
             if (field === 'scorecardurl') { 
                 return {
                     field: field,
-                    headerName: 'Document',
+                    headerName: headerMappings[field] || 'Document',
                     cellRenderer: PdfCellRenderer,
                     width: 150,
                     resizable: false,
@@ -142,10 +146,9 @@ const ReadExamdetails2 = () => {
                     filter: false,
                 };
             }
-
             return {
                 field: field,
-                headerName: field,
+                headerName: headerMappings[field] || field,
                 editable: false,
                 resizable: true,
                 sortable: true,
@@ -166,7 +169,6 @@ const ReadExamdetails2 = () => {
     if (!userId) {
         return (
             <div>
-                <div><h2> ReadExamdetails2 </h2></div>
                 <div className="alert alert-warning">User not logged in. Please login to view data.</div>
             </div>
         );
@@ -174,7 +176,6 @@ const ReadExamdetails2 = () => {
 
     return (
         <div>
-            <div><h2> ReadExamdetails2 </h2></div>
             <div>
                 {isLoadingDataRes || isLoadingDataResMeta ? (
                     <div>Loading...</div>

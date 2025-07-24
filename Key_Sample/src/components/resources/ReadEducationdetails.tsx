@@ -6,7 +6,6 @@ import {
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useQuery } from '@tanstack/react-query';
-// 1. Import your existing GridFSImageService
 import { gridFSImageService } from '../../services/GridFSImageService';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -23,6 +22,16 @@ const getCookie = (name: string): string | null => {
     return null;
 };
 
+// Mappings for user-friendly column headers
+const headerMappings: { [key: string]: string } = {
+    board: 'Board',
+    specialization: 'Specialization / Stream',
+    schoolname: 'School / College Name',
+    grading: 'Score / Grade',
+    passingyear: 'Year of Passing',
+    marksobtained: 'Marksheet'
+};
+
 const ReadEducationdetails = () => {
     const [rowData, setRowData] = useState<any[]>([]);
     const [colDef1, setColDef1] = useState<any[]>([]);
@@ -36,19 +45,15 @@ const ReadEducationdetails = () => {
 
     const userId = sessionStorage.getItem('user_id');
 
-    // 2. NEW: Custom cell renderer component for the PDF button
     const PdfCellRenderer = (props: any) => {
         const fileId = props.value;
         const [isLoading, setIsLoading] = useState(false);
 
         const handlePdfClick = async () => {
             if (!fileId) return;
-
             setIsLoading(true);
             try {
-                // Use the existing service to get the PDF URL
                 const pdfUrl = await gridFSImageService.getImageUrl(fileId);
-                // Open the URL in a new browser tab
                 window.open(pdfUrl, '_blank');
             } catch (error) {
                 console.error("Failed to retrieve PDF:", error);
@@ -58,12 +63,10 @@ const ReadEducationdetails = () => {
             }
         };
 
-        // If there's no file ID, show a simple text message.
         if (!fileId) {
             return <span style={{ color: '#999', fontSize: '12px' }}>No File</span>;
         }
 
-        // Render a button that calls the handler on click.
         return (
             <button 
                 onClick={handlePdfClick} 
@@ -131,15 +134,13 @@ const ReadEducationdetails = () => {
 
     useEffect(() => {
         const data = fetchData || [];
-        const fields = requiredFields.filter(field => field !== 'id' && field !== 'applicant_id') || [];
+        const fields = requiredFields.filter(field => field !== 'id' && field !== 'applicant_id' && field !=='level');
 
         const columns = fields.map(field => {
-            // 3. NEW: Logic to use the custom renderer for your PDF field
-            // IMPORTANT: Change 'file_retrive' to the actual name of your PDF file ID field from the database.
             if (field === 'marksobtained') { 
                 return {
                     field: field,
-                    headerName: 'Document', // You can set a custom column title
+                    headerName: headerMappings[field] || 'Document',
                     cellRenderer: PdfCellRenderer,
                     width: 150,
                     resizable: false,
@@ -147,11 +148,9 @@ const ReadEducationdetails = () => {
                     filter: false,
                 };
             }
-
-            // This is the default behavior for all other columns
             return {
                 field: field,
-                headerName: field,
+                headerName: headerMappings[field] || field,
                 editable: false,
                 resizable: true,
                 sortable: true,
@@ -172,9 +171,6 @@ const ReadEducationdetails = () => {
     if (!userId) {
         return (
             <div>
-                <div>
-                    <h2> ReadEducationdetails </h2>
-                </div>
                 <div className="alert alert-warning">
                     User not logged in. Please login to view data.
                 </div>
@@ -185,15 +181,10 @@ const ReadEducationdetails = () => {
     return (
         <div>
             <div>
-                <h2> ReadEducationdetails </h2>
-            </div>
-            <div>
                 {isLoadingDataRes || isLoadingDataResMeta ? (
                     <div>Loading...</div>
                 ) : errorDataRes || errorDataResMeta ? (
                     <div>Error loading data: {errorDataRes?.message || errorDataResMeta?.message}</div>
-                ) : rowData.length === 0 && colDef1.length === 0 ? (
-                    <div>No data available. Please add a resource attribute.</div>
                 ) : rowData.length === 0 ? (
                     <div>No data found for the current user.</div>
                 ) : (
@@ -211,10 +202,7 @@ const ReadEducationdetails = () => {
                 )}
             </div>
             {showToast && (
-                <div
-                    className="toast-container position-fixed top-20 start-50 translate-middle p-3"
-                    style={{ zIndex: 1550 }}
-                >
+                <div className="toast-container position-fixed top-20 start-50 translate-middle p-3" style={{ zIndex: 1550 }}>
                     <div className="toast show" role="alert" aria-live="assertive" aria-atomic="true">
                         <div className="toast-header">
                             <strong className="me-auto">Success</strong>

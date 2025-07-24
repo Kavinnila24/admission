@@ -21,6 +21,14 @@ const getCookie = (name: string): string | null => {
     return null;
 };
 
+// Mappings for user-friendly column headers
+const headerMappings: { [key: string]: string } = {
+    name: 'Guardian Name',
+    relation: 'Relation',
+    mobile: 'Mobile Number',
+    email: 'Email ID'
+};
+
 const ReadGuardian = () => {
     const [rowData, setRowData] = useState<any[]>([]);
     const [colDef1, setColDef1] = useState<any[]>([]);
@@ -32,26 +40,17 @@ const ReadGuardian = () => {
 
     const regex = /^(g_|archived|extra_data)/;
 
-    // Get user_id from session storage
     const userId = sessionStorage.getItem('user_id');
 
-    // Fetch resource data using useQuery
     const { data: dataRes, isLoading: isLoadingDataRes, error: errorDataRes } = useQuery({
         queryKey: ['resourceData', 'guardian', userId],
         queryFn: async () => {
             const params = new URLSearchParams();
             const queryId: any = "GET_ALL";
             params.append("queryId", queryId);
-
             const accessToken = getCookie("access_token");
-
-            if (!accessToken) {
-                throw new Error("Access token not found");
-            }
-            
-            if (!userId) {
-                throw new Error("User ID not found in session storage");
-            }
+            if (!accessToken) throw new Error("Access token not found");
+            if (!userId) throw new Error("User ID not found in session storage");
 
             const response = await fetch(
                 `${apiConfig.getResourceUrl('guardian')}?` + params.toString(),
@@ -64,25 +63,18 @@ const ReadGuardian = () => {
                     credentials: "include",
                 }
             );
-
-            if (!response.ok) {
-                throw new Error("Error: " + response.status);
-            }
+            if (!response.ok) throw new Error("Error: " + response.status);
 
             const data = await response.json();
-            
-            // Filter data where applicant_id matches user_id
             const filteredData = (data.resource || []).filter((item: any) => 
                 item.applicant_id && item.applicant_id.toString() === userId.toString()
             );
-
             setFetchedData(filteredData);
             return { ...data, resource: filteredData };
         },
-        enabled: !!userId, // Only run query if userId exists
+        enabled: !!userId,
     });
 
-    // Fetch metadata using useQuery
     const { data: dataResMeta, isLoading: isLoadingDataResMeta, error: errorDataResMeta } = useQuery({
         queryKey: ['resourceMetaData', 'Guardian'],
         queryFn: async () => {
@@ -93,10 +85,7 @@ const ReadGuardian = () => {
                     headers: { "Content-Type": "application/json" },
                 }
             );
-
-            if (!response.ok) {
-                throw new Error("Error: " + response.status);
-            }
+            if (!response.ok) throw new Error("Error: " + response.status);
 
             const data = await response.json();
             setResMetaData(data);
@@ -111,11 +100,11 @@ const ReadGuardian = () => {
 
     useEffect(() => {
         const data = fetchData || [];
-        const fields = requiredFields.filter(field => field !== 'id' && field !== 'applicant_id') || [];
+        const fields = requiredFields.filter(field => field !== 'id' && field !== 'applicant_id');
 
         const columns = fields.map(field => ({
             field: field,
-            headerName: field,
+            headerName: headerMappings[field] || field,
             editable: false,
             resizable: true,
             sortable: true,
@@ -132,16 +121,10 @@ const ReadGuardian = () => {
         editable: false,
     };
     
-    // Show message if no user_id in session
     if (!userId) {
         return (
             <div>
-                <div>
-                    <h2> ReadGuardian </h2>
-                </div>
-                <div className="alert alert-warning">
-                    User not logged in. Please login to view data.
-                </div>
+                <div className="alert alert-warning">User not logged in. Please login to view data.</div>
             </div>
         );
     }
@@ -149,15 +132,10 @@ const ReadGuardian = () => {
     return (
         <div>
             <div>
-                <h2> ReadGuardian </h2>
-            </div>
-            <div>
                 {isLoadingDataRes || isLoadingDataResMeta ? (
                     <div>Loading...</div>
                 ) : errorDataRes || errorDataResMeta ? (
                     <div>Error loading data: {errorDataRes?.message || errorDataResMeta?.message}</div>
-                ) : rowData.length === 0 && colDef1.length === 0 ? (
-                    <div>No data available. Please add a resource attribute.</div>
                 ) : rowData.length === 0 ? (
                     <div>No data found for the current user.</div>
                 ) : (
@@ -175,10 +153,7 @@ const ReadGuardian = () => {
                 )}
             </div>
             {showToast && (
-                <div
-                    className="toast-container position-fixed top-20 start-50 translate-middle p-3"
-                    style={{ zIndex: 1550 }}
-                >
+                <div className="toast-container position-fixed top-20 start-50 translate-middle p-3" style={{ zIndex: 1550 }}>
                     <div className="toast show" role="alert" aria-live="assertive" aria-atomic="true">
                         <div className="toast-header">
                             <strong className="me-auto">Success</strong>

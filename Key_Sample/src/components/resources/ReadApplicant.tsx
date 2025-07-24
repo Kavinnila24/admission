@@ -22,6 +22,18 @@ const getCookie = (name: string): string | null => {
     return null;
 };
 
+// 1. Define the mapping object for your header names
+const headerMappings: { [key: string]: string } = {
+  fullname12: 'Full Name',
+  fullnamead: 'Full Name (Aadhaar)',
+  mobile: 'Mobile No.',
+  email: 'Email ID',
+  abc: 'ABC ID',
+  gender: 'Gender',
+  dob: 'Date of Birth',
+  photo: 'Photo'
+};
+
 const ReadApplicant = () => {
     const [rowData, setRowData] = useState<any[]>([]);
     const [colDef1, setColDef1] = useState<any[]>([]);
@@ -33,7 +45,6 @@ const ReadApplicant = () => {
 
     const regex = /^(g_|archived|extra_data)/;
     
-    // Get user_id from session storage
     const userId = sessionStorage.getItem('user_id');
 
     // Fetch resource data using useQuery
@@ -43,44 +54,31 @@ const ReadApplicant = () => {
             const params = new URLSearchParams();
             const queryId: any = "GET_ALL";
             params.append("queryId", queryId);
-
             const accessToken = getCookie("access_token");
-
-            if (!accessToken) {
-                throw new Error("Access token not found");
-            }
+            if (!accessToken) throw new Error("Access token not found");
+            if (!userId) throw new Error("User ID not found in session storage");
             
-            if (!userId) {
-                throw new Error("User ID not found in session storage");
-            }
-
             const response = await fetch(
                 `${apiConfig.getResourceUrl('applicant')}?` + params.toString(),
                 {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${accessToken}`, // Add token here
+                        "Authorization": `Bearer ${accessToken}`,
                     },
                     credentials: "include",
                 }
             );
-
-            if (!response.ok) {
-                throw new Error("Error: " + response.status);
-            }
+            if (!response.ok) throw new Error("Error: " + response.status);
 
             const data = await response.json();
-            
-            // Filter data where the applicant's 'id' matches the userId from session
             const filteredData = (data.resource || []).filter((item: any) => 
                 item.applicant_id && item.applicant_id.toString() === userId.toString()
             );
-
             setFetchedData(filteredData);
             return { ...data, resource: filteredData };
         },
-        enabled: !!userId, // Only run query if userId exists
+        enabled: !!userId,
     });
 
     // Fetch metadata using useQuery
@@ -94,11 +92,8 @@ const ReadApplicant = () => {
                     headers: { "Content-Type": "application/json" },
                 }
             );
-
-            if (!response.ok) {
-                throw new Error("Error: " + response.status);
-            }
-
+            if (!response.ok) throw new Error("Error: " + response.status);
+            
             const data = await response.json();
             setResMetaData(data);
             setFields(data[0]?.fieldValues || []);
@@ -110,7 +105,6 @@ const ReadApplicant = () => {
         },
     });
 
-    // Photo cell renderer component
     const PhotoCellRenderer = (props: any) => {
         const fileId = props.value;
         const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -121,60 +115,34 @@ const ReadApplicant = () => {
                 const fetchImageUrl = async () => {
                     try {
                         const url = await gridFSImageService.getImageUrl(fileId);
-                        if (isMounted) {
-                            setImageUrl(url);
-                        }
+                        if (isMounted) setImageUrl(url);
                     } catch (error) {
                         console.error("Failed to retrieve image:", error);
-                        if (isMounted) {
-                            setImageUrl(null); // Set to null on error
-                        }
+                        if (isMounted) setImageUrl(null);
                     }
                 };
-
                 fetchImageUrl();
             }
-
             return () => {
                 isMounted = false;
-                if (imageUrl) {
-                    URL.revokeObjectURL(imageUrl);
-                }
+                if (imageUrl) URL.revokeObjectURL(imageUrl);
             };
         }, [fileId]);
 
-        if (!fileId) {
-            return <span style={{ color: '#999', fontSize: '12px' }}>No photo</span>;
-        }
-
-        if (!imageUrl) {
-             return <span style={{ color: '#999', fontSize: '12px' }}>Loading...</span>;
-        }
+        if (!fileId) return <span style={{ color: '#999', fontSize: '12px' }}>No photo</span>;
+        if (!imageUrl) return <span style={{ color: '#999', fontSize: '12px' }}>Loading...</span>;
 
         return (
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%'
-            }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                 <img
                     src={imageUrl}
                     alt="photo"
-                    style={{
-                        height: '50px',
-                        width: '50px',
-                        objectFit: 'cover',
-                        borderRadius: '4px',
-                        border: '1px solid #ddd'
-                    }}
+                    style={{ height: '50px', width: '50px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #ddd' }}
                     onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                         const parent = target.parentElement;
-                        if(parent){
-                           parent.innerHTML = '<span style="color: #999; font-size: 12px;">No image</span>';
-                        }
+                        if(parent) parent.innerHTML = '<span style="color: #999; font-size: 12px;">No image</span>';
                     }}
                 />
             </div>
@@ -189,7 +157,7 @@ const ReadApplicant = () => {
             if (field === 'photo') {
                 return {
                     field: field,
-                    headerName: 'Photo',
+                    headerName: headerMappings[field] || 'Photo', // Use mapping
                     cellRenderer: PhotoCellRenderer,
                     width: 80,
                     resizable: false,
@@ -199,7 +167,8 @@ const ReadApplicant = () => {
             }
             return {
                 field: field,
-                headerName: field,
+                // 2. Use the mapping for the header name
+                headerName: headerMappings[field] || field,
                 editable: false,
                 resizable: true,
                 sortable: true,
@@ -217,16 +186,10 @@ const ReadApplicant = () => {
         editable: false,
     };
     
-    // Show message if no user_id in session
     if (!userId) {
         return (
             <div>
-                <div>
-                    <h2> ReadApplicant </h2>
-                </div>
-                <div className="alert alert-warning">
-                    User not logged in. Please login to view data.
-                </div>
+                <div className="alert alert-warning">User not logged in. Please login to view data.</div>
             </div>
         );
     }
@@ -234,15 +197,10 @@ const ReadApplicant = () => {
     return (
         <div>
             <div>
-                <h2> ReadApplicant </h2>
-            </div>
-            <div>
                 {isLoadingDataRes || isLoadingDataResMeta ? (
                     <div>Loading...</div>
                 ) : errorDataRes || errorDataResMeta ? (
                     <div>Error loading data: {errorDataRes?.message || errorDataResMeta?.message}</div>
-                ) : rowData.length === 0 && colDef1.length === 0 ? (
-                    <div>No data available. Please add a resource attribute.</div>
                 ) : rowData.length === 0 ? (
                     <div>No data found for the current user.</div>
                 ) : (
@@ -262,10 +220,7 @@ const ReadApplicant = () => {
                 )}
             </div>
             {showToast && (
-                <div
-                    className="toast-container position-fixed top-20 start-50 translate-middle p-3"
-                    style={{ zIndex: 1550 }}
-                >
+                <div className="toast-container position-fixed top-20 start-50 translate-middle p-3" style={{ zIndex: 1550 }}>
                     <div className="toast show" role="alert" aria-live="assertive" aria-atomic="true">
                         <div className="toast-header">
                             <strong className="me-auto">Success</strong>

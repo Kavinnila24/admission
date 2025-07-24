@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import './Dashboard.css';
 import ReadApplicant from './resources/ReadApplicant';
 import ReadCurrentaddress from './resources/ReadCurrentaddress';
 import ReadEducationdetails from './resources/ReadEducationdetails';
@@ -12,92 +13,76 @@ import ReadProgrampreference from './resources/ReadProgrampreference';
 
 const Dashboard = () => {
   const [activeComponent, setActiveComponent] = useState<string>('applicant');
+  const [applicationNumber, setApplicationNumber] = useState<string | null>(null);
 
   const components = [
-    { key: 'applicant', label: 'Personal Details', component: ReadApplicant },
+    { key: 'applicant', label: 'Personal', component: ReadApplicant },
     { key: 'currentaddress', label: 'Current Address', component: ReadCurrentaddress },
     { key: 'permaddress', label: 'Permanent Address', component: ReadPermaddress },
     { key: 'guardian', label: 'Guardian', component: ReadGuardian },
-    { key: 'programpreference', label: 'Program Preference', component: ReadProgrampreference },
-    { key: 'examdetails', label: 'Exam Details', component: ReadExamdetails },
-    { key: 'examdetails2', label: 'Exam Details 2', component: ReadExamdetails2 },
+    { key: 'programpreference', label: 'Program Preferences', component: ReadProgrampreference },
+    { key: 'examdetails', label: 'JEE MAIN', component: ReadExamdetails },
+    { key: 'examdetails2', label: 'JEE ADVANCED', component: ReadExamdetails2 },
     { key: 'olympiad', label: 'Olympiad', component: ReadOlympiad },
-    { key: 'educationdetails', label: 'Education Details', component: ReadEducationdetails },
-    { key: 'educationdetails2', label: 'Education Details 2', component: ReadEducationdetails2 },
+    { key: 'educationdetails', label: '12th Board', component: ReadEducationdetails },
+    { key: 'educationdetails2', label: '10th Board', component: ReadEducationdetails2 },
   ];
 
-  const renderActiveComponent = () => {
-    // if (activeComponent === 'dashboard') {
-    //   return (
-    //     <div className='d-flex flex-column align-items-center justify-content-center p-4'>
-    //       <h1 className='mb-4'>Dashboard</h1>
-    //       <div className='mt-4'>
-    //         <img
-    //           src="aura.jpg"
-    //           alt="Dashboard Image"
-    //           width={500}
-    //           height={500}
-    //           className="rounded-lg shadow-lg"
-    //           style={{ borderRadius: '8px' }}
-    //         />
-    //       </div>
-    //       <div className='mt-4 text-center'>
-    //         <p className='lead'>Welcome to the Admission Management System</p>
-    //         <p className='text-muted'>Select a component from the navigation to view data</p>
-    //       </div>
-    //     </div>
-    //   );
-    // }
+  useEffect(() => {
+    const storedAppNumber = sessionStorage.getItem('applicationNumber');
+    setApplicationNumber(storedAppNumber);
+  }, []);
 
+  const renderActiveComponent = () => {
     const selectedComponent = components.find(comp => comp.key === activeComponent);
     if (selectedComponent) {
       const ComponentToRender = selectedComponent.component;
       return <ComponentToRender />;
     }
-
     return <div>Component not found</div>;
   };
 
   return (
-    <div className='container-fluid'>
-      {/* Navigation */}
-      <div className='row'>
-        <div className='col-12'>
-          <nav className='navbar navbar-expand-lg navbar-light bg-light border-bottom mb-4'>
-            <div className='container-fluid'>
-              {/* <span className='navbar-brand mb-0 h1'>Admission Dashboard</span> */}
-              
-              <button 
-                className='navbar-toggler' 
-                type='button' 
-                data-bs-toggle='collapse' 
-                data-bs-target='#navbarNav'
-              >
-                <span className='navbar-toggler-icon'></span>
-              </button>
-
-              <div className='collapse navbar-collapse' id='navbarNav'>
-                <ul className='navbar-nav me-auto'>
-                  {components.map((comp) => (
-                    <li key={comp.key} className='nav-item'>
-                      <button
-                        className={`nav-link btn btn-link ${activeComponent === comp.key ? 'active fw-bold' : ''}`}
-                        onClick={() => setActiveComponent(comp.key)}
-                      >
-                        {comp.label}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+    <div className="dashboard">
+      {/* Header */}
+      <div className="dashboard-header">
+        <div className="container-fluid">
+          <div className="row align-items-center">
+            <div className="col-md-6">
+              <h1 className="dashboard-title">Application Dashboard</h1>
             </div>
-          </nav>
+            <div className="col-md-6 text-md-end">
+              {applicationNumber && (
+                <div className="app-number">
+                  <span>Application No: </span>
+                  <strong>{applicationNumber}</strong>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Content Area */}
-      <div className='row'>
-        <div className='col-12'>
+      {/* Tabs Navigation */}
+      <div className="tabs-container">
+        <div className="container-fluid">
+          <div className="tabs-wrapper">
+            {components.map((comp) => (
+              <button
+                key={comp.key}
+                className={`tab ${activeComponent === comp.key ? 'tab-active' : ''}`}
+                onClick={() => setActiveComponent(comp.key)}
+              >
+                {comp.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="content">
+        <div className="container-fluid">
           {renderActiveComponent()}
         </div>
       </div>
