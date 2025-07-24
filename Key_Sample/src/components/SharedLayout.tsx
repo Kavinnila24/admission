@@ -163,9 +163,9 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ children, pageTitle }) => {
       <div className={`${styles.mainContent} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
         <div className={styles.contentHeader}>
           <div className={styles.pageTitle}>{currentPageTitle}</div>
-          <div className={styles.userProfile}>
+          {/* <div className={styles.userProfile}>
             <ProfileImageUploader />
-          </div>
+          </div> */}
         </div>
         <div className={styles.contentBody}>
           <div className={styles.formContent}>

@@ -12,9 +12,9 @@ const SuccessScreen = () => {
   return (
     <div className="success-screen">
       <div className="success-box">
-        <div className="checkmark-circle">
-          <div className="checkmark draw"></div>
-        </div>
+        {/* <div className="checkmark-circle"> */}
+          {/* <div className="checkmark draw"></div> */}
+        {/* </div> */}
         <h1>Payment Successful!</h1>
         <p>Your application has been submitted successfully.</p>
       </div>

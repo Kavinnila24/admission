@@ -175,8 +175,6 @@ export const GridFSImageUploader = forwardRef<any, ImageUploaderProps>(
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
         >
-          // Replace the file input with this more explicit version:
-
         <input
           type="file"
           accept={allowedTypes.join(",")}
@@ -259,7 +257,7 @@ export const GridFSImageUploader = forwardRef<any, ImageUploaderProps>(
               <p className="mb-1">{placeholder}</p>
               <small className="text-muted">
                 {allowedTypes.map(type => type.split('/')[1]).join(', ').toUpperCase()} • Max 5MB
-                {<span className="d-block">Stored in GridFS</span>}
+                {/* {<span className="d-block">Stored in GridFS</span>} */}
               </small>
               {dragOver && (
                 <p className="text-primary mt-2 mb-0">Drop your file here!</p>

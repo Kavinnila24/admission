@@ -6,7 +6,8 @@ import {
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useQuery } from '@tanstack/react-query';
-import { gridFSImageService } from '../../services/GridFSImageService'; // Adjust path if necessary
+// 1. Import your existing GridFSImageService
+import { gridFSImageService } from '../../services/GridFSImageService';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -22,7 +23,7 @@ const getCookie = (name: string): string | null => {
     return null;
 };
 
-const ReadApplicant = () => {
+const ReadEducationdetails = () => {
     const [rowData, setRowData] = useState<any[]>([]);
     const [colDef1, setColDef1] = useState<any[]>([]);
     const [resMetaData, setResMetaData] = useState<ResourceMetaData[]>([]);
@@ -32,73 +33,91 @@ const ReadApplicant = () => {
     const [showToast, setShowToast] = useState<any>(false);
 
     const regex = /^(g_|archived|extra_data)/;
-    
-    // Get user_id from session storage
+
     const userId = sessionStorage.getItem('user_id');
 
-    // Fetch resource data using useQuery
+    // 2. NEW: Custom cell renderer component for the PDF button
+    const PdfCellRenderer = (props: any) => {
+        const fileId = props.value;
+        const [isLoading, setIsLoading] = useState(false);
+
+        const handlePdfClick = async () => {
+            if (!fileId) return;
+
+            setIsLoading(true);
+            try {
+                // Use the existing service to get the PDF URL
+                const pdfUrl = await gridFSImageService.getImageUrl(fileId);
+                // Open the URL in a new browser tab
+                window.open(pdfUrl, '_blank');
+            } catch (error) {
+                console.error("Failed to retrieve PDF:", error);
+                alert("Could not load the PDF file. Please try again.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        // If there's no file ID, show a simple text message.
+        if (!fileId) {
+            return <span style={{ color: '#999', fontSize: '12px' }}>No File</span>;
+        }
+
+        // Render a button that calls the handler on click.
+        return (
+            <button 
+                onClick={handlePdfClick} 
+                disabled={isLoading}
+                className="btn btn-sm btn-outline-primary"
+            >
+                {isLoading ? 'Loading...' : 'View Document'}
+            </button>
+        );
+    };
+
     const { data: dataRes, isLoading: isLoadingDataRes, error: errorDataRes } = useQuery({
-        queryKey: ['resourceData', 'applicant', userId],
+        queryKey: ['resourceData', 'educationdetails', userId],
         queryFn: async () => {
             const params = new URLSearchParams();
             const queryId: any = "GET_ALL";
             params.append("queryId", queryId);
-
             const accessToken = getCookie("access_token");
-
-            if (!accessToken) {
-                throw new Error("Access token not found");
-            }
-            
-            if (!userId) {
-                throw new Error("User ID not found in session storage");
-            }
+            if (!accessToken) throw new Error("Access token not found");
+            if (!userId) throw new Error("User ID not found in session storage");
 
             const response = await fetch(
-                `${apiConfig.getResourceUrl('applicant')}?` + params.toString(),
+                `${apiConfig.getResourceUrl('educationdetails')}?` + params.toString(),
                 {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${accessToken}`, // Add token here
+                        "Authorization": `Bearer ${accessToken}`,
                     },
                     credentials: "include",
                 }
             );
-
-            if (!response.ok) {
-                throw new Error("Error: " + response.status);
-            }
-
+            if (!response.ok) throw new Error("Error: " + response.status);
             const data = await response.json();
-            
-            // Filter data where the applicant's 'id' matches the userId from session
             const filteredData = (data.resource || []).filter((item: any) => 
                 item.applicant_id && item.applicant_id.toString() === userId.toString()
             );
-
             setFetchedData(filteredData);
             return { ...data, resource: filteredData };
         },
-        enabled: !!userId, // Only run query if userId exists
+        enabled: !!userId,
     });
 
-    // Fetch metadata using useQuery
     const { data: dataResMeta, isLoading: isLoadingDataResMeta, error: errorDataResMeta } = useQuery({
-        queryKey: ['resourceMetaData', 'Applicant'],
+        queryKey: ['resourceMetaData', 'Educationdetails'],
         queryFn: async () => {
             const response = await fetch(
-                `${apiConfig.getResourceMetaDataUrl('Applicant')}?`,
+                `${apiConfig.getResourceMetaDataUrl('Educationdetails')}?`,
                 {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 }
             );
-
-            if (!response.ok) {
-                throw new Error("Error: " + response.status);
-            }
-
+            if (!response.ok) throw new Error("Error: " + response.status);
             const data = await response.json();
             setResMetaData(data);
             setFields(data[0]?.fieldValues || []);
@@ -110,100 +129,33 @@ const ReadApplicant = () => {
         },
     });
 
-    // Photo cell renderer component
-    const PhotoCellRenderer = (props: any) => {
-        const fileId = props.value;
-        const [imageUrl, setImageUrl] = useState<string | null>(null);
-
-        useEffect(() => {
-            let isMounted = true;
-            if (fileId) {
-                const fetchImageUrl = async () => {
-                    try {
-                        const url = await gridFSImageService.getImageUrl(fileId);
-                        if (isMounted) {
-                            setImageUrl(url);
-                        }
-                    } catch (error) {
-                        console.error("Failed to retrieve image:", error);
-                        if (isMounted) {
-                            setImageUrl(null); // Set to null on error
-                        }
-                    }
-                };
-
-                fetchImageUrl();
-            }
-
-            return () => {
-                isMounted = false;
-                if (imageUrl) {
-                    URL.revokeObjectURL(imageUrl);
-                }
-            };
-        }, [fileId]);
-
-        if (!fileId) {
-            return <span style={{ color: '#999', fontSize: '12px' }}>No photo</span>;
-        }
-
-        if (!imageUrl) {
-             return <span style={{ color: '#999', fontSize: '12px' }}>Loading...</span>;
-        }
-
-        return (
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%'
-            }}>
-                <img
-                    src={imageUrl}
-                    alt="photo"
-                    style={{
-                        height: '50px',
-                        width: '50px',
-                        objectFit: 'cover',
-                        borderRadius: '4px',
-                        border: '1px solid #ddd'
-                    }}
-                    onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const parent = target.parentElement;
-                        if(parent){
-                           parent.innerHTML = '<span style="color: #999; font-size: 12px;">No image</span>';
-                        }
-                    }}
-                />
-            </div>
-        );
-    };
-
     useEffect(() => {
         const data = fetchData || [];
         const fields = requiredFields.filter(field => field !== 'id' && field !== 'applicant_id') || [];
 
         const columns = fields.map(field => {
-            if (field === 'photo') {
+            // 3. NEW: Logic to use the custom renderer for your PDF field
+            // IMPORTANT: Change 'file_retrive' to the actual name of your PDF file ID field from the database.
+            if (field === 'marksobtained') { 
                 return {
                     field: field,
-                    headerName: 'Photo',
-                    cellRenderer: PhotoCellRenderer,
-                    width: 80,
+                    headerName: 'Document', // You can set a custom column title
+                    cellRenderer: PdfCellRenderer,
+                    width: 150,
                     resizable: false,
                     sortable: false,
                     filter: false,
                 };
             }
+
+            // This is the default behavior for all other columns
             return {
                 field: field,
                 headerName: field,
                 editable: false,
                 resizable: true,
                 sortable: true,
-                filter: true,
+                filter: true
             };
         });
 
@@ -217,12 +169,11 @@ const ReadApplicant = () => {
         editable: false,
     };
     
-    // Show message if no user_id in session
     if (!userId) {
         return (
             <div>
                 <div>
-                    <h2> ReadApplicant </h2>
+                    <h2> ReadEducationdetails </h2>
                 </div>
                 <div className="alert alert-warning">
                     User not logged in. Please login to view data.
@@ -234,7 +185,7 @@ const ReadApplicant = () => {
     return (
         <div>
             <div>
-                <h2> ReadApplicant </h2>
+                <h2> ReadEducationdetails </h2>
             </div>
             <div>
                 {isLoadingDataRes || isLoadingDataResMeta ? (
@@ -255,8 +206,6 @@ const ReadApplicant = () => {
                             paginationPageSize={10}
                             animateRows={true}
                             rowSelection="multiple"
-                            rowHeight={60}
-                            headerHeight={40}
                         />
                     </div>
                 )}
@@ -285,4 +234,4 @@ const ReadApplicant = () => {
     );
 };
 
-export default ReadApplicant;
+export default ReadEducationdetails;

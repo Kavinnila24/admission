@@ -17,12 +17,12 @@ import platform.webservice.Enum;
  * 
  */
 public class Program extends BasePossibleValue {
-		public static String ID_btech_cse = "btech_cse";
-		public static String NAME_btech_cse = "btech_cse";
-		public static String ID_btech_ece = "btech_ece";
-		public static String NAME_btech_ece = "btech_ece";
-		public static String ID_btech_aids = "btech_aids";
-		public static String NAME_btech_aids = "btech_aids";
+		public static String ID_btech_cse = "BTech CSE";
+		public static String NAME_btech_cse = "BTech CSE";
+		public static String ID_btech_ece = "BTech ECE";
+		public static String NAME_btech_ece = "BTech ECE";
+		public static String ID_btech_aids = "BTech AI&DS";
+		public static String NAME_btech_aids = "BTech AI&DS";
 		public static String ID_Integrated_Master_of_Technology_CSE = "Integrated Master of Technology CSE";
 		public static String NAME_Integrated_Master_of_Technology_CSE = "Integrated Master of Technology CSE";
 		public static String ID_Integrated_Master_of_Technology_ECE = "Integrated Master of Technology ECE";
