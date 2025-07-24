@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiConfig from '../../config/apiConfig';
-import { GridFSImageUploader } from "../GridFSImageUploader"; // 👈 Importer added
+import { GridFSImageUploader } from "../GridFSImageUploader";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchForeignResource } from '../../apis/resources';
 import { fetchEnum } from '../../apis/enum';
+import { getCurrentUserId } from '../../utils/userUtils'; // Add this import
 
 export type resourceMetaData = {
   resource: string;
@@ -39,11 +40,20 @@ const CreateExamdetails2 = () => {
         rollno: "Roll No",
         score: "Score",
         rank: "Rank",
-        scorecardurl: "Scorecard Upload", // 👈 Label updated
+        scorecardurl: "Scorecard Upload",
     };
 
+    // Fix this useEffect
     useEffect(() => {
-        setDataToSave((prev: any) => ({ ...prev, applicantid: "nil" }));
+        // Simple approach - just get the already-stored database ID
+        const userId = getCurrentUserId();
+        if (userId) {
+            setDataToSave((prev:any) => ({
+                ...prev,
+                applicant_id: userId, // Changed from applicantid to applicant_id
+            }));
+            console.log('Auto-populated applicant_id:', userId);
+        }
     }, []);
 
     const fetchForeignData = async (foreignResource: string, fieldName: string, foreignField: string) => {
@@ -124,7 +134,9 @@ const CreateExamdetails2 = () => {
         if (response.ok) {
             setShowToast(true);
             setTimeout(() => setShowToast(false), 3000);
-            setDataToSave({ applicantid: 'nil' });
+            // Reset but keep applicant_id
+            const userId = getCurrentUserId();
+            setDataToSave({ applicant_id: userId });
         }
     };
 
@@ -141,10 +153,9 @@ const CreateExamdetails2 = () => {
             <div className="container mt-4">
                 <div className="row">
                     {fields.map((field, index) => {
-                        if (field.name !== 'id' && field.name !== 'applicantid' && !regex.test(field.name)) {
+                        if (field.name !== 'id' && field.name !== 'applicant_id' && !regex.test(field.name)) {
                             return (
                                 <div key={index} className="col-md-6 mb-2">
-                                    {/* 👇 New conditional rendering for file upload */}
                                     {field.name === 'scorecardurl' ? (
                                         <div className="mb-3">
                                             <label className="form-label">{field.required && <span style={{ color: "red" }}>*</span>} {customFieldLabels[field.name] || field.name}</label>

@@ -3,6 +3,7 @@ import apiConfig from '../../config/apiConfig';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchForeignResource } from '../../apis/resources';
 import { fetchEnum } from '../../apis/enum';
+import { getCurrentUserId } from '../../utils/userUtils'; // Add this import
 
 export type resourceMetaData = {
   resource: string;
@@ -45,6 +46,19 @@ const CreateProgrampreference = () => {
         'Integrated Master of Technology CSE': "Integrated Master of Technology CSE",
         'Integrated Master of Technology ECE': "Integrated Master of Technology ECE"
     };
+
+    // Add this useEffect to auto-populate applicant_id
+    useEffect(() => {
+        // Simple approach - just get the already-stored database ID
+        const userId = getCurrentUserId();
+        if (userId) {
+            setDataToSave((prev:any) => ({
+                ...prev,
+                applicant_id: userId,
+            }));
+            console.log('Auto-populated applicant_id:', userId);
+        }
+    }, []);
 
     const fetchForeignData = async (foreignResource: string, fieldName: string, foreignField: string) => {
         try {
@@ -172,7 +186,7 @@ const CreateProgrampreference = () => {
 
     const renderFields = () => {
         const rows = [];
-        const validFields = fields.filter(field => field.name !== 'id' && !regex.test(field.name));
+        const validFields = fields.filter(field => field.name !== 'id' && field.name !== 'applicant_id' && !regex.test(field.name));
         for (let i = 0; i < validFields.length; i += 2) {
             rows.push(
                 <div className="row" key={`row-${i}`}>

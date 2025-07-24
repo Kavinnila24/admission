@@ -3,6 +3,7 @@ import apiConfig from "../../config/apiConfig";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchForeignResource } from '../../apis/resources';
 import { fetchEnum } from '../../apis/enum';
+import { getCurrentUserId } from '../../utils/userUtils'; // Add this import
 
 export type resourceMetaData = {
   resource: string;
@@ -42,6 +43,19 @@ const CreatePermaddress = () => {
         pincode: "Pincode",
         city: "City",
     };
+
+    // Add this useEffect to auto-populate applicant_id
+    useEffect(() => {
+        // Simple approach - just get the already-stored database ID
+        const userId = getCurrentUserId();
+        if (userId) {
+            setDataToSave((prev:any) => ({
+                ...prev,
+                applicant_id: userId,
+            }));
+            console.log('Auto-populated applicant_id:', userId);
+        }
+    }, []);
 
     const fetchForeignData = async (foreignResource: string, fieldName: string, foreignField: string) => {
         try {
@@ -107,12 +121,22 @@ const CreatePermaddress = () => {
         if (checked) {
             try {
                 const currentAddress = JSON.parse(sessionStorage.getItem("current_address") || "{}");
-                setDataToSave(currentAddress);
+                // Make sure to keep the applicant_id when copying current address
+                const userId = getCurrentUserId();
+                setDataToSave({
+                    ...currentAddress,
+                    applicant_id: userId
+                });
             } catch {
                 console.warn("No current address found in session storage.");
+                // Still set applicant_id even if no current address
+                const userId = getCurrentUserId();
+                setDataToSave({ applicant_id: userId });
             }
         } else {
-            setDataToSave({});
+            // Reset but keep applicant_id
+            const userId = getCurrentUserId();
+            setDataToSave({ applicant_id: userId });
         }
     };
 
@@ -136,7 +160,9 @@ const CreatePermaddress = () => {
         if (response.ok) {
             setShowToast(true);
             setTimeout(() => setShowToast(false), 3000);
-            setDataToSave({});
+            // Reset but keep applicant_id
+            const userId = getCurrentUserId();
+            setDataToSave({ applicant_id: userId });
             setSameAsCurrent(false);
         }
     };
@@ -154,7 +180,7 @@ const CreatePermaddress = () => {
             <div className="container mt-3">
                 <div className="row">
                     {fields.map((field, index) => {
-                        if (field.name !== "id" && field.name !== "applicantid" && !regex.test(field.name)) {
+                        if (field.name !== "id" && field.name !== "applicant_id" && !regex.test(field.name)) {
                             return (
                                 <div key={index} className="col-md-6 mb-2">
                                     {field.foreign ? (

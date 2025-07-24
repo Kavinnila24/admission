@@ -133,7 +133,9 @@ const CreateExamdetails = () => {
         if (response.ok) {
             setShowToast(true);
             setTimeout(() => setShowToast(false), 3000);
-            setDataToSave({ applicant_id: 'nil' });
+            // Reset but keep applicant_id - FIXED LINE
+            const userId = getCurrentUserId();
+            setDataToSave({ applicant_id: userId });
         }
     };
 

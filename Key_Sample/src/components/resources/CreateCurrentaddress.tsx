@@ -3,6 +3,7 @@ import apiConfig from "../../config/apiConfig";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchForeignResource } from '../../apis/resources';
 import { fetchEnum } from '../../apis/enum';
+import { getCurrentUserId } from '../../utils/userUtils'; // Add this import
 
 export type resourceMetaData = {
   resource: string;
@@ -41,6 +42,19 @@ const CreateCurrentaddress = () => {
         pincode: "Pincode",
         city: "City",
     };
+
+    // Add this useEffect to auto-populate applicant_id
+    useEffect(() => {
+        // Simple approach - just get the already-stored database ID
+        const userId = getCurrentUserId();
+        if (userId) {
+            setDataToSave((prev: any) => ({
+                ...prev,
+                applicant_id: userId,
+            }));
+            console.log('Auto-populated applicant_id:', userId);
+        }
+    }, []);
 
     const fetchForeignData = async (foreignResource: string, fieldName: string, foreignField: string) => {
         try {
@@ -121,8 +135,11 @@ const CreateCurrentaddress = () => {
         if (response.ok) {
             setShowToast(true);
             setTimeout(() => setShowToast(false), 3000);
+            // Store current address for permanent address to use
             sessionStorage.setItem("current_address", JSON.stringify(dataToSave));
-            setDataToSave({});
+            // Reset but keep applicant_id
+            const userId = getCurrentUserId();
+            setDataToSave({ applicant_id: userId });
         }
     };
 

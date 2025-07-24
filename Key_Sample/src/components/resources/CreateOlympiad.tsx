@@ -3,7 +3,8 @@ import apiConfig from '../../config/apiConfig';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchForeignResource } from '../../apis/resources';
 import { fetchEnum } from '../../apis/enum';
-import { GridFSImageUploader } from "../GridFSImageUploader"; // Added import
+import { getCurrentUserId } from '../../utils/userUtils'; // Add this import
+import { GridFSImageUploader } from "../GridFSImageUploader";
 
 export type resourceMetaData = {
   resource: string;
@@ -40,8 +41,17 @@ const CreateOlympiad = () => {
         proof: "Proof of Olympiad Training"
     };
 
+    // Fix this useEffect - use correct field name and import
     useEffect(() => {
-        setDataToSave((prev: any) => ({ ...prev, applicantid: "nil" }));
+        // Simple approach - just get the already-stored database ID
+        const userId = getCurrentUserId();
+        if (userId) {
+            setDataToSave((prev:any) => ({
+                ...prev,
+                applicant_id: userId, // Changed from applicantid to applicant_id
+            }));
+            console.log('Auto-populated applicant_id:', userId);
+        }
     }, []);
 
     const fetchForeignData = async (foreignResource: string, fieldName: string, foreignField: string) => {
@@ -122,7 +132,9 @@ const CreateOlympiad = () => {
         if (response.ok) {
             setShowToast(true);
             setTimeout(() => setShowToast(false), 3000);
-            setDataToSave({ applicantid: 'nil' });
+            // Reset but keep applicant_id
+            const userId = getCurrentUserId();
+            setDataToSave({ applicant_id: userId });
         }
     };
 
@@ -142,7 +154,6 @@ const CreateOlympiad = () => {
                         if (field.name !== 'id' && field.name !== 'applicant_id' && !regex.test(field.name)) {
                             return (
                                 <div key={index} className="col-md-6 mb-2">
-                                     {/* Added conditional rendering for file upload */}
                                     {field.name === 'proof' ? (
                                         <div className="mb-3">
                                             <label className="form-label">{field.required && <span style={{ color: "red" }}>*</span>} {customFieldLabels[field.name] || field.name}</label>

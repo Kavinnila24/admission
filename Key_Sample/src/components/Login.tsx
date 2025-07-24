@@ -20,7 +20,7 @@ export default function Login() {
       if (userRole === 'ADMIN') {
         navigate("/page13");
       } else {
-        navigate("/page1");
+        navigate("/personal");
       }
     }
   }, [])
@@ -133,7 +133,7 @@ export default function Login() {
       if (userRole === 'ADMIN') {
         navigate("/page13");
       } else {
-        navigate("/page1");
+        navigate("/personal");
       }
 
     } catch (err: any) {

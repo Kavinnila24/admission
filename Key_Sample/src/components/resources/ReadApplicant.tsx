@@ -169,7 +169,7 @@ const ReadApplicant = () => {
 
     useEffect(() => {
         const data = fetchData || [];
-        const fields = requiredFields.filter(field => field !== 'id') || [];
+        const fields = requiredFields.filter(field => field !== 'id' && field !== 'applicant_id') || [];
 
         const columns = fields.map(field => {
             if (field === 'photo') {
