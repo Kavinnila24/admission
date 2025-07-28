@@ -1,0 +1,243 @@
+/* Full page layout with background image */
+.login-page-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: url('../../public/FullBg.png'); /* Same background as login */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  justify-content: flex-end; /* This pushes the form to the right */
+  align-items: center;
+}
+
+/* Right panel positioned over the white space */
+.login-form-wrapper {
+  width: 100%; /* Use full width */
+  display: flex;
+  justify-content: flex-end; /* Align to end */
+  align-items: center;
+  padding-right: calc(20% - 225px); /* This centers form at 25% from right = 75% from left */
+  padding-left: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  box-sizing: border-box;
+}
+/* Register form container */
+.login-form-container {
+  width: 100%;
+  max-width: 450px; /* Slightly wider for more fields */
+}
+
+/* Form title */
+.login-form-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 600;
+  color: #4A90E2;
+  margin: 0 0 30px 0;
+}
+
+/* Form grid */
+.login-form-grid {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Form fields */
+.login-form-field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Form labels */
+.login-form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+/* Form inputs */
+.login-form-input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.login-form-input::placeholder {
+  color: #999;
+}
+
+.login-form-input:focus {
+  outline: none;
+  border-color: #4A90E2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  background-color: white;
+}
+
+/* Form help text */
+.login-form-help {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+/* Error message */
+.login-form-error {
+  color: #dc3545;
+  font-size: 14px;
+  text-align: center;
+  background-color: #f8d7da;
+  padding: 10px;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* Register button */
+.login-form-button {
+  width: 100%;
+  padding: 15px;
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-form-button:hover:not(:disabled) {
+  background-color: #357ABD;
+  transform: translateY(-1px);
+}
+
+.login-form-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-form-button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Link text */
+.login-form-link {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.login-form-link a {
+  color: #4A90E2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-form-link a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-page-container {
+    justify-content: center;
+  }
+  
+  .login-form-wrapper {
+    width: 90%;
+    padding: 20px;
+    justify-content: center;
+  }
+  
+  .login-form-container {
+    max-width: 400px;
+  }
+  
+  .login-form-title {
+    font-size: 24px;
+  }
+  
+  .login-form-grid {
+    gap: 18px;
+  }
+  
+  .login-form-input {
+    padding: 12px;
+  }
+  
+  .login-form-button {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-form-wrapper {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .login-form-container {
+    max-width: 350px;
+  }
+  
+  .login-form-title {
+    font-size: 20px;
+  }
+  
+  .login-form-grid {
+    gap: 15px;
+  }
+  
+  .login-form-input {
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  .login-form-button {
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  .login-form-label {
+    font-size: 13px;
+  }
+}
+
+/* Landscape mobile orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+  .login-page-container {
+    justify-content: flex-end;
+  }
+  
+  .login-form-wrapper {
+    width: 55%;
+    padding: 15px;
+  }
+  
+  .login-form-grid {
+    gap: 12px;
+  }
+}

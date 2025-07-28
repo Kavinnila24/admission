@@ -95,61 +95,75 @@ export default function Login() {
     }
   };
 
-  // ... rest of your Login component JSX
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleLogin();
+  };
+
   return (
-    <div className="login-page-container">
-      <div className="login-form-wrapper">
-        <div className="login-form-container">
-          <h2 className="login-form-title">
-            Login to your account
-          </h2>
-          <form className="login-form-grid" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
-            <div className="login-form-field">
-              <label htmlFor="email" className="login-form-label">
-                <span style={{ color: 'red' }}>*</span>Registered Email ID
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="login-form-input"
-                placeholder="Enter your email"
-                value={credentials.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="login-form-field">
-              <label htmlFor="password" className="login-form-label">
-                <span style={{ color: 'red' }}>*</span>Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="login-form-input"
-                placeholder="Enter your password"
-                value={credentials.password}
-                onChange={handleInputChange}
-                required
-              />
+    <div id="login-container">
+      <div id="right-panel">
+        <div className="login-form-container" id="login-form-container">
+          <div className="form-title-header">
+            <h2 className="form-main-title">Login Form</h2>
+          </div>
+          
+          <form className="login-form" onSubmit={handleSubmit}>
+            <div className="form-body">
+              <div className="input-group">
+                <div className="input-with-icon">
+                  <span className="input-icon">✉</span>
+                  <input
+                    type="email"
+                    className="form-control"
+                    name="email"
+                    placeholder="Registered Email ID"
+                    value={credentials.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="input-group">
+                <div className="input-with-icon">
+                  <span className="input-icon">🔓</span>
+                  <input
+                    type="password"
+                    className="form-control"
+                    name="password"
+                    placeholder="Password"
+                    value={credentials.password}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="button-group">
+                <button type="submit" className="btn login-btn">
+                  Login
+                </button>
+              </div>
+               
+              {error && (
+                <div className="error-message">{error}</div>
+              )}
+               
+              <div className="forgot-password">
+                <a href="#" className="text-decoration-none">
+                  Forgot Password?
+                </a>
+              </div>
+              
+              <div className="change-password">
+                <span>Don't have an account? </span>
+                <Link to="/register" className="text-decoration-none">
+                  Create an account
+                </Link>
+              </div>
             </div>
           </form>
-          {error && (
-            <div className="login-error-message">{error}</div>
-          )}
-          <div className="login-button-group">
-            <button
-              type="button"
-              className="login-submit-button"
-              onClick={handleLogin}
-            >
-              Login
-            </button>
-          </div>
-          <div className="login-register-link-container">
-            Don't have an account? <Link to="/register" className="login-register-link">Create an account</Link>
-          </div>
         </div>
       </div>
     </div>

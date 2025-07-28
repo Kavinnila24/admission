@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import apiConfig from "../config/apiConfig";
 import { getCookie } from "../apis/enum";
-import "./Login.css"; // Reusing the same styles
+import "./Register.css"; // Reusing the same styles
 
 export default function Register() {
   const navigate = useNavigate();
